@@ -3,10 +3,10 @@ import * as React from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { BentoCard } from "@/components/BentoCard";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Filter } from "lucide-react";
+import { JobList } from "@/components/JobList";
+import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
 
 const savedFilters = [
   {
@@ -21,7 +21,7 @@ const savedFilters = [
   },
 ];
 
-const jobResults = [
+const staticJobResults = [
   {
     id: 1,
     title: "Frontend Engineer",
@@ -46,10 +46,109 @@ const jobResults = [
     salary: "$125,000",
     posted: "2025-06-13",
   },
+  // ... add at least 12 jobs for demo
+  {
+    id: 4,
+    title: "Product Designer",
+    company: "DesignLoose",
+    location: "NYC",
+    salary: "$105,000",
+    posted: "2025-06-12",
+  },
+  {
+    id: 5,
+    title: "Fullstack Engineer",
+    company: "CodeBase",
+    location: "Remote",
+    salary: "$130,000",
+    posted: "2025-06-11",
+  },
+  {
+    id: 6,
+    title: "Frontend Developer",
+    company: "WebGen",
+    location: "Remote",
+    salary: "$100,000",
+    posted: "2025-06-11",
+  },
+  {
+    id: 7,
+    title: "Senior UI Engineer",
+    company: "BloomLogic",
+    location: "Remote",
+    salary: "$130,000",
+    posted: "2025-06-10",
+  },
+  {
+    id: 8,
+    title: "Junior React Dev",
+    company: "QuickApps",
+    location: "Remote",
+    salary: "$85,000",
+    posted: "2025-06-09",
+  },
+  {
+    id: 9,
+    title: "Frontend Architect",
+    company: "CoreSystems",
+    location: "NYC",
+    salary: "$145,000",
+    posted: "2025-06-08",
+  },
+  {
+    id: 10,
+    title: "UI/UX Designer",
+    company: "PixelPush",
+    location: "NYC",
+    salary: "$102,000",
+    posted: "2025-06-10",
+  },
+  {
+    id: 11,
+    title: "Web Engineer",
+    company: "SkyForge",
+    location: "Remote",
+    salary: "$110,000",
+    posted: "2025-06-13",
+  },
+  {
+    id: 12,
+    title: "Frontend Lead",
+    company: "AppPilot",
+    location: "Remote",
+    salary: "$135,000",
+    posted: "2025-06-09",
+  },
 ];
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
+  const [backgroundJobs, setBackgroundJobs] = React.useState<BackgroundJob[]>([]);
+
+  // Simulate filtered jobs, for demo just static list
+  const jobResults = React.useMemo(() => staticJobResults, []);
+
+  // For demo: simulate background "apply" jobs that resolve after 3 seconds
+  const handleApply = (selectedJobs: typeof jobResults) => {
+    const newJobs: BackgroundJob[] = selectedJobs.map((job) => ({
+      id: job.id,
+      title: job.title,
+      status: "running" as const,
+    }));
+    setBackgroundJobs((prev) => [...prev, ...newJobs]);
+
+    // Simulate each job finishing after a timeout
+    newJobs.forEach((job, i) => {
+      setTimeout(() => {
+        setBackgroundJobs((prev) =>
+          prev.map((j) =>
+            j.id === job.id ? { ...j, status: "completed" as const } : j
+          )
+        );
+      }, 2000 + i * 1000); // stagger complete times for effect
+    });
+  };
+
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
@@ -79,7 +178,6 @@ const Index = () => {
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
-                    // No real search; static demo
                   }}
                   className="mt-3 flex gap-2"
                 >
@@ -95,7 +193,6 @@ const Index = () => {
                   </Button>
                 </form>
               </BentoCard>
-
               {/* Saved Filters Bento */}
               <BentoCard
                 icon="save"
@@ -113,40 +210,10 @@ const Index = () => {
                 </ul>
               </BentoCard>
             </div>
-
-            {/* Job Results List */}
-            <Card className="w-full">
-              <CardHeader className="flex flex-row items-center gap-2 p-4 pt-6 pb-2">
-                <Filter className="w-5 h-5 text-primary" />
-                <CardTitle className="text-lg font-semibold">Job Search Results</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-2">
-                <div className="flex flex-col gap-3">
-                  {jobResults.length === 0 ? (
-                    <div className="text-muted-foreground text-center py-8">No jobs found. Try a different filter!</div>
-                  ) : (
-                    jobResults.map((job) => (
-                      <div
-                        key={job.id}
-                        className="border rounded-lg p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-2 hover:shadow-md transition"
-                      >
-                        <div>
-                          <div className="font-bold">{job.title}</div>
-                          <div className="text-muted-foreground text-sm">{job.company} • {job.location}</div>
-                        </div>
-                        <div className="flex flex-row gap-4 items-center">
-                          <span className="bg-accent text-accent-foreground px-2 py-1 rounded text-xs">{job.salary}</span>
-                          <span className="text-xs text-muted-foreground">
-                            Posted {new Date(job.posted).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                          </span>
-                          {/* Could add Apply button here */}
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+            {/* Job Results List with Select/Apply */}
+            <JobList jobs={jobResults} onApply={handleApply} />
+            {/* Background Jobs/Applications progress box */}
+            <BackgroundJobBox jobs={backgroundJobs} />
           </main>
         </SidebarInset>
       </div>
