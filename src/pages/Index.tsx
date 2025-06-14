@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -6,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { JobList } from "@/components/JobList";
 import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
 const savedFilters = [
   {
@@ -163,7 +165,6 @@ const Index = () => {
       <div className="min-h-screen flex w-full bg-background">
         <AppSidebar />
         <SidebarInset className="flex flex-col flex-1">
-          {/* Sticky header */}
           <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors">
             <div className="h-16 flex items-center px-6 gap-4">
               {/* Show sidebar trigger button on mobile */}
@@ -173,11 +174,8 @@ const Index = () => {
               <h2 className="font-semibold text-lg">Smart Jobs Hub</h2>
             </div>
           </header>
-          {/* Main content */}
           <main className="flex-1 w-full p-6 flex flex-col gap-6">
-            {/* Top: Search and Filters */}
             <div className="flex flex-col md:flex-row gap-6">
-              {/* Search Bento */}
               <BentoCard
                 icon="search"
                 title="Job Search"
@@ -202,7 +200,6 @@ const Index = () => {
                   </Button>
                 </form>
               </BentoCard>
-              {/* Saved Filters Bento */}
               <BentoCard
                 icon="save"
                 title="Saved Filters"
@@ -219,16 +216,30 @@ const Index = () => {
                 </ul>
               </BentoCard>
             </div>
-            {/* Job Results List with Select/Apply */}
             <JobList jobs={jobResults} onApply={handleApply} />
-            {/* Render all background job groups under results */}
-            {jobBatches.length > 0 && (
-              <div>
-                {jobBatches.map((batch, i) => (
+            {/* Always show the Background Job Groups card under results */}
+            <div>
+              {jobBatches.length === 0 ? (
+                // Show empty state card
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle className="text-base">
+                      Background Applications
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-muted-foreground text-center py-4">
+                      No jobs applied yet.
+                    </div>
+                  </CardContent>
+                </Card>
+              ) : (
+                // Show all job batches as before
+                jobBatches.map((batch, i) => (
                   <BackgroundJobBox jobs={batch} batchNumber={i} key={i} />
-                ))}
-              </div>
-            )}
+                ))
+              )}
+            </div>
           </main>
         </SidebarInset>
       </div>
