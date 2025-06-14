@@ -221,9 +221,13 @@ const Index = () => {
             </div>
             {/* Job Results List with Select/Apply */}
             <JobList jobs={jobResults} onApply={handleApply} />
-            {/* Show status for the most recent batch only */}
+            {/* Render all background job groups under results */}
             {jobBatches.length > 0 && (
-              <BackgroundJobBox jobs={jobBatches[jobBatches.length - 1]} />
+              <div>
+                {jobBatches.map((batch, i) => (
+                  <BackgroundJobBox jobs={batch} batchNumber={i} key={i} />
+                ))}
+              </div>
             )}
           </main>
         </SidebarInset>

@@ -10,25 +10,33 @@ export type BackgroundJob = {
 
 interface BackgroundJobBoxProps {
   jobs: BackgroundJob[];
+  batchNumber?: number;
 }
 
-export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs }) => {
+export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs, batchNumber }) => {
   if (!jobs.length) return null;
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle className="text-base">Background Applications (Current Set)</CardTitle>
+        <CardTitle className="text-base">
+          Background Applications
+          {typeof batchNumber === "number"
+            ? ` (Set ${batchNumber + 1})`
+            : " (Current Set)"}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="divide-y divide-muted-foreground/10">
           {jobs.map((job) => (
             <li key={job.id} className="py-2 flex justify-between items-center">
               <span>{job.title}</span>
-              <span className={`text-xs px-2 rounded ${
-                job.status === "running"
-                  ? "bg-yellow-100 text-yellow-700"
-                  : "bg-green-100 text-green-800"
-              }`}>
+              <span
+                className={`text-xs px-2 rounded ${
+                  job.status === "running"
+                    ? "bg-yellow-100 text-yellow-700"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
                 {job.status === "running" ? "Running" : "Completed"}
               </span>
             </li>
@@ -38,3 +46,4 @@ export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs }) => {
     </Card>
   );
 };
+
