@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 
@@ -19,7 +18,7 @@ export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs, batchN
     <Card className="mt-6">
       <CardHeader>
         <CardTitle className="text-base">
-          Background Applications
+          ApplyGen Application Batches
           {typeof batchNumber === "number"
             ? ` (Set ${batchNumber + 1})`
             : " (Current Set)"}
@@ -46,4 +45,3 @@ export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs, batchN
     </Card>
   );
 };
-

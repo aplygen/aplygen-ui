@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -224,7 +223,7 @@ const Index = () => {
                 <Card className="mt-6">
                   <CardHeader>
                     <CardTitle className="text-base">
-                      Background Applications
+                      ApplyGen Application Batches
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -236,7 +235,11 @@ const Index = () => {
               ) : (
                 // Show all job batches as before
                 jobBatches.map((batch, i) => (
-                  <BackgroundJobBox jobs={batch} batchNumber={i} key={i} />
+                  <BackgroundJobBox
+                    jobs={batch}
+                    batchNumber={i}
+                    key={i}
+                  />
                 ))
               )}
             </div>
