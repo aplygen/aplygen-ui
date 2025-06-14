@@ -1,102 +1,93 @@
-
 import * as React from "react";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppNavbar } from "@/components/AppNavbar";
 import { BentoCard } from "@/components/BentoCard";
 
-const bentoData = [
-  {
-    icon: "search",
-    title: "Job Search",
-    description: "Find new job opportunities with AI-powered filters for roles, location, salary, and more.",
-    content: (
-      <ul className="text-sm mt-3 space-y-1">
-        <li>• React Developer - New York, $120k</li>
-        <li>• UX Designer - Remote, $100k</li>
-        <li>• Backend Engineer - Berlin, $110k</li>
-        <li className="italic text-xs text-muted-foreground">3 more matches…</li>
-      </ul>
-    ),
-  },
-  {
-    icon: "save",
-    title: "Saved Filters",
-    description: "Quickly access and manage your saved job search filters.",
-    content: (
-      <ul className="text-sm mt-3 space-y-1">
-        <li>• Remote Frontend, $110k+</li>
-        <li>• Product Manager, San Francisco</li>
-        <li>• Junior QA, London</li>
-      </ul>
-    ),
-  },
-  {
-    icon: "chart-bar",
-    title: "Analytics",
-    description: "View insights on your job applications, interview rates, and success trends.",
-    content: (
-      <div className="mt-3 space-y-1">
-        <div className="text-lg font-bold">12</div>
-        <div className="text-xs text-muted-foreground">Applications this week</div>
-        <div className="text-sm">
-          <span className="font-semibold text-green-600">34%</span> Interview rate
-        </div>
-      </div>
-    ),
-  },
-  {
-    icon: "file-check",
-    title: "Applied Jobs & Status",
-    description: "Track the jobs you’ve applied to and see current application statuses.",
-    content: (
-      <ul className="text-sm mt-3 space-y-1">
-        <li>• Meta — Interview</li>
-        <li>• Google — Awaiting Response</li>
-        <li>• Stripe — Rejected</li>
-        <li>• Canva — Offer</li>
-      </ul>
-    ),
-  },
-];
+export default function Applications() {
+  // Example static data for demonstration
+  const searchData = {
+    totalSearches: 4,
+    filters: ["Remote", "Full-Time", "Frontend", "Senior"],
+    lastSearched: "2025-06-11",
+  };
+  const saveData = {
+    savedFilters: 2,
+    filters: ["Management", "Backend"],
+  };
+  const analyticsData = {
+    interviews: 5,
+    offers: 2,
+    progress: "40%",
+  };
+  const jobsData = {
+    applied: 10,
+    status: {
+      interviewing: 2,
+      offered: 1,
+      rejected: 3,
+      pending: 4,
+    },
+  };
 
-const Applications = () => {
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        <SidebarInset className="flex flex-col flex-1">
-          {/* Always-visible SidebarTrigger in header for mobile/desktop */}
-          <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors flex items-center">
-            <div className="h-16 flex items-center px-6 gap-4 w-full">
-              <div className="md:hidden block">
-                <SidebarTrigger />
+    <div className="min-h-screen bg-background flex flex-col">
+      <AppNavbar />
+      <main className="w-full py-6 flex-1 flex flex-col items-center px-4">
+        <div className="w-full max-w-5xl grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <BentoCard
+            icon="search"
+            title="Job Search"
+            description="Total searches, filters, and last activity"
+          >
+            <div className="mt-3">
+              <div className="text-xs mb-0.5 text-muted-foreground">
+                Filters used: <span className="font-medium">{searchData.filters.join(", ")}</span>
               </div>
-              <h2 className="font-semibold text-lg">Applications Dashboard</h2>
-              {/* SidebarTrigger visible on desktop when sidebar is collapsed */}
-              <div className="hidden md:block ml-auto">
-                <SidebarTrigger />
+              <div className="text-xs text-muted-foreground">
+                Last search: <span className="font-medium">{searchData.lastSearched}</span>
+              </div>
+              <div className="mt-2 text-xs">Total smart searches: <span className="font-bold">{searchData.totalSearches}</span></div>
+            </div>
+          </BentoCard>
+          <BentoCard
+            icon="save"
+            title="Saved Filters"
+            description="Overview of your saved smart search filters"
+          >
+            <div className="mt-3">
+              <div className="text-xs text-muted-foreground">
+                Filters: <span className="font-medium">{saveData.filters.join(", ")}</span>
+              </div>
+              <div className="mt-2 text-xs">
+                Total: <span className="font-bold">{saveData.savedFilters}</span>
               </div>
             </div>
-          </header>
-          <main className="flex-1 w-full p-6 flex items-stretch">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 w-full mx-auto max-w-screen-2xl">
-              {bentoData.map((card) => (
-                <BentoCard
-                  key={card.title}
-                  icon={card.icon as any}
-                  title={card.title}
-                  description={card.description}
-                  className="relative"
-                >
-                  {card.content}
-                </BentoCard>
-              ))}
+          </BentoCard>
+          <BentoCard
+            icon="chart-bar"
+            title="Analytics"
+            description="Interview, offer progress, and more"
+          >
+            <div className="mt-3 flex flex-col gap-1 text-xs text-muted-foreground">
+              <span>Interviews: <span className="font-bold">{analyticsData.interviews}</span></span>
+              <span>Offers: <span className="font-bold">{analyticsData.offers}</span></span>
+              <span>Progress: <span className="font-bold">{analyticsData.progress}</span></span>
             </div>
-          </main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          </BentoCard>
+          <BentoCard
+            icon="file-check"
+            title="Applied Jobs & Status"
+            description="Stats of applied jobs and statuses"
+          >
+            <div className="mt-3 flex flex-col gap-1 text-xs text-muted-foreground">
+              <span>Total applied: <span className="font-bold">{jobsData.applied}</span></span>
+              <span>Interviewing: <span className="font-bold">{jobsData.status.interviewing}</span></span>
+              <span>Offered: <span className="font-bold">{jobsData.status.offered}</span></span>
+              <span>Rejected: <span className="font-bold">{jobsData.status.rejected}</span></span>
+              <span>Pending: <span className="font-bold">{jobsData.status.pending}</span></span>
+            </div>
+          </BentoCard>
+        </div>
+      </main>
+    </div>
   );
-};
-
-export default Applications;
+}
