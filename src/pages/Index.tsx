@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
@@ -123,29 +122,39 @@ const staticJobResults = [
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
-  const [backgroundJobs, setBackgroundJobs] = React.useState<BackgroundJob[]>([]);
+  // This state is an array of batches. Each batch is an array of BackgroundJob.
+  const [jobBatches, setJobBatches] = React.useState<BackgroundJob[][]>([]);
 
   // Simulate filtered jobs, for demo just static list
   const jobResults = React.useMemo(() => staticJobResults, []);
 
   // For demo: simulate background "apply" jobs that resolve after 3 seconds
-  const handleApply = (selectedJobs: typeof jobResults) => {
-    const newJobs: BackgroundJob[] = selectedJobs.map((job) => ({
+  const handleApply = (selectedJobs: typeof staticJobResults) => {
+    if (selectedJobs.length === 0) return;
+    // Each batch is max 10 jobs per user apply.
+    const newBatch: BackgroundJob[] = selectedJobs.map((job) => ({
       id: job.id,
       title: job.title,
       status: "running" as const,
     }));
-    setBackgroundJobs((prev) => [...prev, ...newJobs]);
 
-    // Simulate each job finishing after a timeout
-    newJobs.forEach((job, i) => {
+    setJobBatches((prev) => [...prev, newBatch]);
+
+    // Simulate job finish
+    newBatch.forEach((job, i) => {
       setTimeout(() => {
-        setBackgroundJobs((prev) =>
-          prev.map((j) =>
+        setJobBatches((prev) => {
+          // Find last batch and update the relevant job
+          const batches = [...prev];
+          const lastBatchIdx = batches.length - 1;
+          if (lastBatchIdx < 0) return batches;
+          const batch = batches[lastBatchIdx].map((j) =>
             j.id === job.id ? { ...j, status: "completed" as const } : j
-          )
-        );
-      }, 2000 + i * 1000); // stagger complete times for effect
+          );
+          batches[lastBatchIdx] = batch;
+          return batches;
+        });
+      }, 2000 + i * 1000);
     });
   };
 
@@ -212,8 +221,10 @@ const Index = () => {
             </div>
             {/* Job Results List with Select/Apply */}
             <JobList jobs={jobResults} onApply={handleApply} />
-            {/* Background Jobs/Applications progress box */}
-            <BackgroundJobBox jobs={backgroundJobs} />
+            {/* Show status for the most recent batch only */}
+            {jobBatches.length > 0 && (
+              <BackgroundJobBox jobs={jobBatches[jobBatches.length - 1]} />
+            )}
           </main>
         </SidebarInset>
       </div>

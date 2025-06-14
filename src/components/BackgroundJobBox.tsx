@@ -17,7 +17,7 @@ export const BackgroundJobBox: React.FC<BackgroundJobBoxProps> = ({ jobs }) => {
   return (
     <Card className="mt-6">
       <CardHeader>
-        <CardTitle className="text-base">Background Applications</CardTitle>
+        <CardTitle className="text-base">Background Applications (Current Set)</CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="divide-y divide-muted-foreground/10">

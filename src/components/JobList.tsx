@@ -52,7 +52,7 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
   const handleApply = () => {
     const selectedJobs = jobs.filter((job) => selectedIds.includes(job.id));
     onApply(selectedJobs);
-    setSelectedIds([]); // Optionally reset selection after applying
+    setSelectedIds([]); // Reset selection after applying
   };
 
   return (
@@ -109,7 +109,7 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
             <PaginationContent>
               <PaginationItem>
                 <PaginationPrevious
-                  asChild
+                  // Removed asChild prop to fix type error.
                   aria-disabled={page === 1}
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   tabIndex={page === 1 ? -1 : 0}
@@ -129,7 +129,7 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
               ))}
               <PaginationItem>
                 <PaginationNext
-                  asChild
+                  // Removed asChild prop to fix type error.
                   aria-disabled={page === numPages}
                   onClick={() => setPage((p) => Math.min(numPages, p + 1))}
                   tabIndex={page === numPages ? -1 : 0}
