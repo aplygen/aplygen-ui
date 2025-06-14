@@ -26,6 +26,9 @@ export function AppSidebar() {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
 
+  // Sidebar "mini" state (icon-only)
+  const collapsed = state === "collapsed";
+
   // Helper for active class
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     isActive ? "bg-muted text-primary font-medium" : "hover:bg-muted/50";
@@ -38,12 +41,17 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible>
+    <Sidebar collapsible="icon">
+      {/* Fallback trigger for mini/collapsed mode */}
+      <SidebarTrigger className="m-2 self-end" />
       <SidebarHeader className="py-4 px-3 flex items-center gap-2 border-b">
         <span className="bg-primary rounded-lg w-8 h-8 flex items-center justify-center text-primary-foreground font-bold text-lg">
           A
         </span>
-        <span className="font-semibold text-lg tracking-tight">Aplygen</span>
+        {/* Hide label in collapsed/mini mode */}
+        {!collapsed && (
+          <span className="font-semibold text-lg tracking-tight">Aplygen</span>
+        )}
       </SidebarHeader>
       <SidebarContent className="flex-1 flex flex-col justify-between">
         <SidebarGroup>
@@ -55,7 +63,8 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className="mr-2 h-5 w-5" />
-                      <span>{item.title}</span>
+                      {/* Only show titles if not collapsed */}
+                      {!collapsed && <span>{item.title}</span>}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -65,6 +74,7 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="p-3 border-t flex justify-between items-center">
+        {/* Theme toggle */}
         <Button
           variant="ghost"
           size="icon"
@@ -83,8 +93,6 @@ export function AppSidebar() {
           </Avatar>
         </Button>
       </SidebarFooter>
-      {/* Fallback trigger for collapsed state */}
-      <SidebarTrigger className="m-2 self-end" />
     </Sidebar>
   );
 }
