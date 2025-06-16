@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobList } from "@/components/JobList";
 import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
@@ -18,6 +19,26 @@ const savedFilters = [
     id: 2,
     name: "Frontend (Remote or NYC)",
     criteria: "Frontend, NYC/Remote, $100k+",
+  },
+  {
+    id: 3,
+    name: "Senior Backend Engineer",
+    criteria: "Backend, Node.js, $120k+",
+  },
+  {
+    id: 4,
+    name: "Full Stack Developer",
+    criteria: "Full Stack, TypeScript, $110k+",
+  },
+  {
+    id: 5,
+    name: "UI/UX Designer",
+    criteria: "Design, Figma, $85k+",
+  },
+  {
+    id: 6,
+    name: "DevOps Engineer",
+    criteria: "AWS, Docker, $130k+",
   },
 ];
 
@@ -123,6 +144,9 @@ const staticJobResults = [
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const [salary, setSalary] = React.useState("");
+  const [jobType, setJobType] = React.useState("");
   // This state is an array of batches. Each batch is an array of BackgroundJob.
   const [jobBatches, setJobBatches] = React.useState<BackgroundJob[][]>([]);
 
@@ -174,74 +198,122 @@ const Index = () => {
             </div>
           </header>
           <main className="flex-1 w-full p-6 flex flex-col gap-6">
-            <div className="flex flex-col md:flex-row gap-6">
+            {/* Enhanced Search and Filters Section */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <BentoCard
                 icon="search"
                 title="Job Search"
-                description="Use a smart filter to search for jobs."
-                className="w-full md:w-1/2"
+                description="Use smart filters to search for your perfect job."
+                className="w-full"
               >
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();
                   }}
-                  className="mt-3 flex gap-2"
+                  className="mt-3 space-y-3"
                 >
-                  <Input
-                    type="text"
-                    placeholder="Search for jobs (e.g., React remote)..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1"
-                  />
-                  <Button type="submit" variant="default">
-                    Search
-                  </Button>
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      placeholder="Search for jobs (e.g., React remote)..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button type="submit" variant="default">
+                      Search
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <Select value={location} onValueChange={setLocation}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="remote">Remote</SelectItem>
+                        <SelectItem value="nyc">New York, NY</SelectItem>
+                        <SelectItem value="sf">San Francisco, CA</SelectItem>
+                        <SelectItem value="la">Los Angeles, CA</SelectItem>
+                        <SelectItem value="chicago">Chicago, IL</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={salary} onValueChange={setSalary}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Salary Range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
+                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
+                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
+                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
+                        <SelectItem value="150k+">$150k+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Job Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="frontend">Frontend</SelectItem>
+                        <SelectItem value="backend">Backend</SelectItem>
+                        <SelectItem value="fullstack">Full Stack</SelectItem>
+                        <SelectItem value="devops">DevOps</SelectItem>
+                        <SelectItem value="design">UI/UX Design</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </form>
               </BentoCard>
               <BentoCard
                 icon="save"
                 title="Saved Filters"
-                description="Quick access to your favorite searches."
-                className="w-full md:w-1/2"
+                description="Quick access to your favorite job searches."
+                className="w-full"
               >
-                <ul className="mt-2 space-y-2">
+                <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
                   {savedFilters.map((filter) => (
-                    <li key={filter.id} className="flex justify-between items-center">
-                      <span className="font-medium">{filter.name}</span>
+                    <div key={filter.id} className="flex justify-between items-center p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
+                      <span className="font-medium text-sm">{filter.name}</span>
                       <span className="text-xs text-muted-foreground">{filter.criteria}</span>
-                    </li>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </BentoCard>
             </div>
-            <JobList jobs={jobResults} onApply={handleApply} />
-            {/* Always show the Background Job Groups card under results */}
-            <div>
-              {jobBatches.length === 0 ? (
-                // Show empty state card
-                <Card className="mt-6">
-                  <CardHeader>
-                    <CardTitle className="text-base">
-                      ApplyGen Application Batches
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-muted-foreground text-center py-4">
-                      No jobs applied yet.
-                    </div>
-                  </CardContent>
-                </Card>
-              ) : (
-                // Show all job batches as before
-                jobBatches.map((batch, i) => (
-                  <BackgroundJobBox
-                    jobs={batch}
-                    batchNumber={i}
-                    key={i}
-                  />
-                ))
-              )}
+
+            {/* Parallel Job Results and Batch Processing */}
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              <div className="xl:col-span-2">
+                <JobList jobs={jobResults} onApply={handleApply} />
+              </div>
+              <div className="xl:col-span-1">
+                {jobBatches.length === 0 ? (
+                  // Show empty state card
+                  <Card className="h-fit">
+                    <CardHeader>
+                      <CardTitle className="text-base">
+                        ApplyGen Application Batches
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-muted-foreground text-center py-4">
+                        No jobs applied yet.
+                      </div>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  // Show all job batches as before
+                  <div className="space-y-4">
+                    {jobBatches.map((batch, i) => (
+                      <BackgroundJobBox
+                        jobs={batch}
+                        batchNumber={i}
+                        key={i}
+                      />
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </main>
         </SidebarInset>
