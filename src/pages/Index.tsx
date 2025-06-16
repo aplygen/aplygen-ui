@@ -282,38 +282,41 @@ const Index = () => {
             </div>
 
             {/* Parallel Job Results and Batch Processing */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              <div className="xl:col-span-2">
-                <JobList jobs={jobResults} onApply={handleApply} />
-              </div>
-              <div className="xl:col-span-1">
-                {jobBatches.length === 0 ? (
-                  // Show empty state card
-                  <Card className="h-fit">
-                    <CardHeader>
-                      <CardTitle className="text-base">
-                        ApplyGen Application Batches
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-muted-foreground text-center py-4">
-                        No jobs applied yet.
-                      </div>
-                    </CardContent>
-                  </Card>
-                ) : (
-                  // Show all job batches as before
-                  <div className="space-y-4">
-                    {jobBatches.map((batch, i) => (
-                      <BackgroundJobBox
-                        jobs={batch}
-                        batchNumber={i}
-                        key={i}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <BentoCard
+                icon="file-check"
+                title="Job Search Results"
+                description="Browse and apply to matching opportunities."
+                className="w-full"
+              >
+                <div className="mt-3">
+                  <JobList jobs={jobResults} onApply={handleApply} />
+                </div>
+              </BentoCard>
+              <BentoCard
+                icon="chart-bar"
+                title="ApplyGen Application Batches"
+                description="Track your job application progress in real-time."
+                className="w-full"
+              >
+                <div className="mt-3">
+                  {jobBatches.length === 0 ? (
+                    <div className="text-muted-foreground text-center py-8">
+                      No jobs applied yet.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {jobBatches.map((batch, i) => (
+                        <BackgroundJobBox
+                          jobs={batch}
+                          batchNumber={i}
+                          key={i}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </BentoCard>
             </div>
           </main>
         </SidebarInset>
