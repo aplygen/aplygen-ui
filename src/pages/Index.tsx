@@ -145,16 +145,16 @@ const Index = () => {
   const [location, setLocation] = React.useState("");
   const [salary, setSalary] = React.useState("");
   const [jobType, setJobType] = React.useState("");
-  // This state is an array of batches. Each batch is an array of BackgroundJob.
   const [jobBatches, setJobBatches] = React.useState<BackgroundJob[][]>([]);
 
-  // Simulate filtered jobs, for demo just static list
   const jobResults = React.useMemo(() => staticJobResults, []);
 
-  // For demo: simulate background "apply" jobs that resolve after 3 seconds
+  const allBatchJobs = React.useMemo(() => {
+    return jobBatches.flat();
+  }, [jobBatches]);
+
   const handleApply = (selectedJobs: typeof staticJobResults) => {
     if (selectedJobs.length === 0) return;
-    // Each batch is max 10 jobs per user apply.
     const newBatch: BackgroundJob[] = selectedJobs.map((job) => ({
       id: job.id,
       title: job.title,
@@ -163,11 +163,9 @@ const Index = () => {
 
     setJobBatches((prev) => [...prev, newBatch]);
 
-    // Simulate job finish
     newBatch.forEach((job, i) => {
       setTimeout(() => {
         setJobBatches((prev) => {
-          // Find last batch and update the relevant job
           const batches = [...prev];
           const lastBatchIdx = batches.length - 1;
           if (lastBatchIdx < 0) return batches;
@@ -287,20 +285,12 @@ const Index = () => {
             className="w-full"
           >
             <div className="mt-3">
-              {jobBatches.length === 0 ? (
+              {allBatchJobs.length === 0 ? (
                 <div className="text-muted-foreground text-center py-8">
                   No jobs applied yet.
                 </div>
               ) : (
-                <div className="space-y-4">
-                  {jobBatches.map((batch, i) => (
-                    <BackgroundJobBox
-                      jobs={batch}
-                      batchNumber={i}
-                      key={i}
-                    />
-                  ))}
-                </div>
+                <BackgroundJobBox jobs={allBatchJobs} />
               )}
             </div>
           </BentoCard>
