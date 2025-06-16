@@ -1,13 +1,11 @@
 import * as React from "react";
-import { SidebarProvider, SidebarInset, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobList } from "@/components/JobList";
 import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { FloatingNavbar } from "@/components/FloatingNavbar";
 
 const savedFilters = [
   {
@@ -184,144 +182,131 @@ const Index = () => {
   };
 
   return (
-    <SidebarProvider>
-      <div className="min-h-screen flex w-full bg-background">
-        <AppSidebar />
-        <SidebarInset className="flex flex-col flex-1">
-          <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-colors">
-            <div className="h-16 flex items-center px-6 gap-4">
-              {/* Show sidebar trigger button on mobile */}
-              <div className="md:hidden">
-                <SidebarTrigger />
+    <div className="min-h-screen bg-background">
+      <FloatingNavbar />
+      <main className="w-full p-6 pt-20 flex flex-col gap-6">
+        {/* Enhanced Search and Filters Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <BentoCard
+            icon="search"
+            title="Job Search"
+            description="Use smart filters to search for your perfect job."
+            className="w-full"
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+              className="mt-3 space-y-3"
+            >
+              <div className="flex gap-2">
+                <Input
+                  type="text"
+                  placeholder="Search for jobs (e.g., React remote)..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="flex-1"
+                />
+                <Button type="submit" variant="default">
+                  Search
+                </Button>
               </div>
-              <h2 className="font-semibold text-lg">Smart Jobs Hub</h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+                <Select value={location} onValueChange={setLocation}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="remote">Remote</SelectItem>
+                    <SelectItem value="nyc">New York, NY</SelectItem>
+                    <SelectItem value="sf">San Francisco, CA</SelectItem>
+                    <SelectItem value="la">Los Angeles, CA</SelectItem>
+                    <SelectItem value="chicago">Chicago, IL</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={salary} onValueChange={setSalary}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Salary Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="60k-80k">$60k - $80k</SelectItem>
+                    <SelectItem value="80k-100k">$80k - $100k</SelectItem>
+                    <SelectItem value="100k-120k">$100k - $120k</SelectItem>
+                    <SelectItem value="120k-150k">$120k - $150k</SelectItem>
+                    <SelectItem value="150k+">$150k+</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={jobType} onValueChange={setJobType}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Job Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="frontend">Frontend</SelectItem>
+                    <SelectItem value="backend">Backend</SelectItem>
+                    <SelectItem value="fullstack">Full Stack</SelectItem>
+                    <SelectItem value="devops">DevOps</SelectItem>
+                    <SelectItem value="design">UI/UX Design</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </form>
+          </BentoCard>
+          <BentoCard
+            icon="save"
+            title="Saved Filters"
+            description="Quick access to your favorite job searches."
+            className="w-full"
+          >
+            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+              {savedFilters.map((filter) => (
+                <div key={filter.id} className="flex justify-between items-center p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
+                  <span className="font-medium text-sm">{filter.name}</span>
+                  <span className="text-xs text-muted-foreground">{filter.criteria}</span>
+                </div>
+              ))}
             </div>
-          </header>
-          <main className="flex-1 w-full p-6 flex flex-col gap-6">
-            {/* Enhanced Search and Filters Section */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <BentoCard
-                icon="search"
-                title="Job Search"
-                description="Use smart filters to search for your perfect job."
-                className="w-full"
-              >
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="mt-3 space-y-3"
-                >
-                  <div className="flex gap-2">
-                    <Input
-                      type="text"
-                      placeholder="Search for jobs (e.g., React remote)..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="flex-1"
+          </BentoCard>
+        </div>
+
+        {/* Parallel Job Results and Batch Processing */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <BentoCard
+            icon="file-check"
+            title="Job Search Results"
+            description="Browse and apply to matching opportunities."
+            className="w-full"
+          >
+            <div className="mt-3">
+              <JobList jobs={jobResults} onApply={handleApply} />
+            </div>
+          </BentoCard>
+          <BentoCard
+            icon="chart-bar"
+            title="ApplyGen Application Batches"
+            description="Track your job application progress in real-time."
+            className="w-full"
+          >
+            <div className="mt-3">
+              {jobBatches.length === 0 ? (
+                <div className="text-muted-foreground text-center py-8">
+                  No jobs applied yet.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {jobBatches.map((batch, i) => (
+                    <BackgroundJobBox
+                      jobs={batch}
+                      batchNumber={i}
+                      key={i}
                     />
-                    <Button type="submit" variant="default">
-                      Search
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="remote">Remote</SelectItem>
-                        <SelectItem value="nyc">New York, NY</SelectItem>
-                        <SelectItem value="sf">San Francisco, CA</SelectItem>
-                        <SelectItem value="la">Los Angeles, CA</SelectItem>
-                        <SelectItem value="chicago">Chicago, IL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={salary} onValueChange={setSalary}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Salary Range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
-                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
-                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
-                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
-                        <SelectItem value="150k+">$150k+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={jobType} onValueChange={setJobType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Job Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="frontend">Frontend</SelectItem>
-                        <SelectItem value="backend">Backend</SelectItem>
-                        <SelectItem value="fullstack">Full Stack</SelectItem>
-                        <SelectItem value="devops">DevOps</SelectItem>
-                        <SelectItem value="design">UI/UX Design</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </form>
-              </BentoCard>
-              <BentoCard
-                icon="save"
-                title="Saved Filters"
-                description="Quick access to your favorite job searches."
-                className="w-full"
-              >
-                <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
-                  {savedFilters.map((filter) => (
-                    <div key={filter.id} className="flex justify-between items-center p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
-                      <span className="font-medium text-sm">{filter.name}</span>
-                      <span className="text-xs text-muted-foreground">{filter.criteria}</span>
-                    </div>
                   ))}
                 </div>
-              </BentoCard>
+              )}
             </div>
-
-            {/* Parallel Job Results and Batch Processing */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <BentoCard
-                icon="file-check"
-                title="Job Search Results"
-                description="Browse and apply to matching opportunities."
-                className="w-full"
-              >
-                <div className="mt-3">
-                  <JobList jobs={jobResults} onApply={handleApply} />
-                </div>
-              </BentoCard>
-              <BentoCard
-                icon="chart-bar"
-                title="ApplyGen Application Batches"
-                description="Track your job application progress in real-time."
-                className="w-full"
-              >
-                <div className="mt-3">
-                  {jobBatches.length === 0 ? (
-                    <div className="text-muted-foreground text-center py-8">
-                      No jobs applied yet.
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {jobBatches.map((batch, i) => (
-                        <BackgroundJobBox
-                          jobs={batch}
-                          batchNumber={i}
-                          key={i}
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </BentoCard>
-            </div>
-          </main>
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+          </BentoCard>
+        </div>
+      </main>
+    </div>
   );
 };
 
