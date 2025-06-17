@@ -12,6 +12,13 @@ const iconMap: Record<IconName, LucideIcon> = {
   "file-check": FileCheck,
 };
 
+const iconColors: Record<IconName, string> = {
+  search: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
+  save: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
+  "chart-bar": "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+  "file-check": "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+};
+
 interface BentoCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon: IconName;
   title: string;
@@ -28,24 +35,46 @@ export const BentoCard: React.FC<BentoCardProps> = ({
   ...props
 }) => {
   const Icon = iconMap[icon];
+  const iconColorClass = iconColors[icon];
+  
   return (
     <div
       className={cn(
-        "group rounded-2xl bg-background shadow-lg border transition hover:shadow-xl hover:border-primary/30 p-6 flex flex-col gap-3 min-h-[180px]",
-        "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary",
+        "group rounded-3xl bg-background/50 backdrop-blur-sm shadow-lg border-2 transition-all duration-300 hover:shadow-2xl hover:border-primary/30 p-8 flex flex-col gap-4 min-h-[200px]",
+        "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50",
+        "relative overflow-hidden",
         className
       )}
       tabIndex={0}
       {...props}
     >
-      <div className="flex items-center gap-3 mb-1">
-        <span className="bg-primary/10 text-primary rounded-xl p-2">
-          <Icon className="w-7 h-7" aria-hidden="true" />
-        </span>
-        <span className="text-xl font-semibold">{title}</span>
+      {/* Background gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <div className="relative z-10">
+        <div className="flex items-center gap-4 mb-2">
+          <span className={cn(
+            "rounded-2xl p-3 transition-all duration-300 group-hover:scale-110 shadow-sm",
+            iconColorClass
+          )}>
+            <Icon className="w-8 h-8" aria-hidden="true" />
+          </span>
+          <div>
+            <h3 className="text-xl font-bold tracking-tight group-hover:text-primary transition-colors duration-200">
+              {title}
+            </h3>
+            {description && (
+              <p className="text-muted-foreground text-sm mt-1 leading-relaxed">
+                {description}
+              </p>
+            )}
+          </div>
+        </div>
+        
+        <div className="mt-4 relative z-10">
+          {children}
+        </div>
       </div>
-      {description && <div className="text-muted-foreground text-sm">{description}</div>}
-      {children}
     </div>
   );
 };

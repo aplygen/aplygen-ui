@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -180,38 +181,38 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
       <FloatingNavbar />
-      <main className="w-full p-6 pt-20 flex flex-col gap-6">
+      <main className="w-full max-w-7xl mx-auto p-6 pt-24 flex flex-col gap-8">
         {/* Enhanced Search and Filters Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <BentoCard
             icon="search"
             title="Job Search"
             description="Use smart filters to search for your perfect job."
-            className="w-full"
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
           >
             <form
               onSubmit={(e) => {
                 e.preventDefault();
               }}
-              className="mt-3 space-y-3"
+              className="mt-4 space-y-4"
             >
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Input
                   type="text"
                   placeholder="Search for jobs (e.g., React remote)..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="flex-1"
+                  className="flex-1 transition-all duration-200 focus:ring-2 focus:ring-primary/50"
                 />
-                <Button type="submit" variant="default">
+                <Button type="submit" variant="default" className="px-6 hover:scale-105 transition-transform duration-200">
                   Search
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
                     <SelectValue placeholder="Location" />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,7 +224,7 @@ const Index = () => {
                   </SelectContent>
                 </Select>
                 <Select value={salary} onValueChange={setSalary}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
                     <SelectValue placeholder="Salary Range" />
                   </SelectTrigger>
                   <SelectContent>
@@ -235,7 +236,7 @@ const Index = () => {
                   </SelectContent>
                 </Select>
                 <Select value={jobType} onValueChange={setJobType}>
-                  <SelectTrigger>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
                     <SelectValue placeholder="Job Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -253,13 +254,13 @@ const Index = () => {
             icon="save"
             title="Saved Filters"
             description="Quick access to your favorite job searches."
-            className="w-full"
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
           >
-            <div className="mt-2 space-y-2 max-h-40 overflow-y-auto">
+            <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
               {savedFilters.map((filter) => (
-                <div key={filter.id} className="flex justify-between items-center p-2 hover:bg-accent rounded-md cursor-pointer transition-colors">
+                <div key={filter.id} className="flex justify-between items-center p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02] border border-transparent hover:border-primary/20">
                   <span className="font-medium text-sm">{filter.name}</span>
-                  <span className="text-xs text-muted-foreground">{filter.criteria}</span>
+                  <span className="text-xs text-muted-foreground bg-accent/30 px-2 py-1 rounded-md">{filter.criteria}</span>
                 </div>
               ))}
             </div>
@@ -267,14 +268,14 @@ const Index = () => {
         </div>
 
         {/* Parallel Job Results and Batch Processing */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <BentoCard
             icon="file-check"
             title="Job Search Results"
             description="Browse and apply to matching opportunities."
-            className="w-full"
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-green-200/30"
           >
-            <div className="mt-3">
+            <div className="mt-4">
               <JobList jobs={jobResults} onApply={handleApply} />
             </div>
           </BentoCard>
@@ -282,12 +283,16 @@ const Index = () => {
             icon="chart-bar"
             title="ApplyGen Application Batches"
             description="Track your job application progress in real-time."
-            className="w-full"
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-blue-200/30"
           >
-            <div className="mt-3">
+            <div className="mt-4">
               {allBatchJobs.length === 0 ? (
-                <div className="text-muted-foreground text-center py-8">
-                  No jobs applied yet.
+                <div className="text-muted-foreground text-center py-12 flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+                    <span className="text-2xl">📝</span>
+                  </div>
+                  <p className="text-sm">No jobs applied yet.</p>
+                  <p className="text-xs text-muted-foreground/60">Select jobs from the search results to start applying!</p>
                 </div>
               ) : (
                 <BackgroundJobBox jobs={allBatchJobs} />
