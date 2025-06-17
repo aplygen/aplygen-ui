@@ -11,6 +11,7 @@ import {
   PaginationNext, 
   PaginationPrevious 
 } from "@/components/ui/pagination";
+import { cn } from "@/lib/utils";
 
 type Job = {
   id: number;
