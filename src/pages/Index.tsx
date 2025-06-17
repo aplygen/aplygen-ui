@@ -148,6 +148,13 @@ const Index = () => {
   const [jobType, setJobType] = React.useState("");
   const [jobBatches, setJobBatches] = React.useState<BackgroundJob[][]>([]);
 
+  // Mock user data - in real app this would come from auth/settings
+  const user = {
+    name: "Vishwas",
+    tagline: "Full Stack Developer",
+    jobTitle: "Software Engineer"
+  };
+
   const jobResults = React.useMemo(() => staticJobResults, []);
 
   const allBatchJobs = React.useMemo(() => {
@@ -181,9 +188,26 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
-      <FloatingNavbar />
-      <main className="w-full max-w-7xl mx-auto p-6 pt-24 flex flex-col gap-8">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 pb-20">
+      {/* Hero Section with Personalized Greeting */}
+      <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-3 border border-primary/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
+              {user.name.charAt(0)}
+            </div>
+            <div className="text-left">
+              <p className="text-lg font-semibold">Hi, {user.name}! 👋</p>
+              <p className="text-sm text-muted-foreground">{user.tagline}</p>
+            </div>
+          </div>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Ready to find your next opportunity? Let's get you connected with the perfect job.
+          </p>
+        </div>
+      </div>
+
+      <main className="w-full max-w-7xl mx-auto p-6 flex flex-col gap-8">
         {/* Enhanced Search and Filters Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <BentoCard
@@ -301,6 +325,9 @@ const Index = () => {
           </BentoCard>
         </div>
       </main>
+
+      {/* Bottom Navigation */}
+      <FloatingNavbar />
     </div>
   );
 };
