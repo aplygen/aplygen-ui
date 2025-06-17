@@ -7,8 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { JobList } from "@/components/JobList";
 import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
 import { FloatingNavbar } from "@/components/FloatingNavbar";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Card, CardContent } from "@/components/ui/card";
 
 const savedFilters = [
   {
@@ -68,6 +66,7 @@ const staticJobResults = [
     salary: "$125,000",
     posted: "2025-06-13",
   },
+  // ... add at least 12 jobs for demo
   {
     id: 4,
     title: "Product Designer",
@@ -152,9 +151,8 @@ const Index = () => {
   // Mock user data - in real app this would come from auth/settings
   const user = {
     name: "Vishwas",
-    tagline: "P.S. I write colourful text on a black screen for a living.",
-    jobTitle: "Software Engineer",
-    avatar: ""
+    tagline: "Full Stack Developer",
+    jobTitle: "Software Engineer"
   };
 
   const jobResults = React.useMemo(() => staticJobResults, []);
@@ -190,189 +188,141 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 pb-32">
-      <main className="w-full max-w-7xl mx-auto p-6">
-        {/* Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 min-h-[calc(100vh-8rem)]">
-          {/* Left Column - Profile & Metrics */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Profile Section */}
-            <div className="space-y-6">
-              <div className="flex items-center gap-4">
-                <Avatar className="h-20 w-20 border-4 border-primary/20">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="bg-gradient-to-br from-orange-400 to-orange-600 text-white text-2xl font-bold">
-                    {user.name.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <div>
-                  <h1 className="text-3xl font-bold text-foreground">{user.name}</h1>
-                  <p className="text-muted-foreground mt-1">{user.tagline}</p>
-                </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 pb-20">
+      {/* Hero Section with Personalized Greeting */}
+      <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-3 border border-primary/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
+              {user.name.charAt(0)}
+            </div>
+            <div className="text-left">
+              <p className="text-lg font-semibold">Hi, {user.name}! 👋</p>
+              <p className="text-sm text-muted-foreground">{user.tagline}</p>
+            </div>
+          </div>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Ready to find your next opportunity? Let's get you connected with the perfect job.
+          </p>
+        </div>
+      </div>
+
+      <main className="w-full max-w-7xl mx-auto p-6 flex flex-col gap-8">
+        {/* Enhanced Search and Filters Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <BentoCard
+            icon="search"
+            title="Job Search"
+            description="Use smart filters to search for your perfect job."
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
+          >
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+              }}
+              className="mt-4 space-y-4"
+            >
+              <div className="flex gap-3">
+                <Input
+                  type="text"
+                  placeholder="Search for jobs (e.g., React remote)..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="flex-1 transition-all duration-200 focus:ring-2 focus:ring-primary/50"
+                />
+                <Button type="submit" variant="default" className="px-6 hover:scale-105 transition-transform duration-200">
+                  Search
+                </Button>
               </div>
-            </div>
-
-            {/* Metrics Cards */}
-            <div className="space-y-4">
-              <Card className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950/30 dark:to-blue-900/30 border-blue-200/50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Applications Sent</p>
-                      <p className="text-2xl font-bold text-blue-700 dark:text-blue-300">42</p>
-                    </div>
-                    <div className="text-blue-500">📤</div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/30 dark:to-green-900/30 border-green-200/50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-green-600 dark:text-green-400">Interviews</p>
-                      <p className="text-2xl font-bold text-green-700 dark:text-green-300">8</p>
-                    </div>
-                    <div className="text-green-500">💬</div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950/30 dark:to-purple-900/30 border-purple-200/50">
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Response Rate</p>
-                      <p className="text-2xl font-bold text-purple-700 dark:text-purple-300">19%</p>
-                    </div>
-                    <div className="text-purple-500">📊</div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-
-          {/* Right Column - Bento Cards */}
-          <div className="lg:col-span-8 space-y-6">
-            {/* Enhanced Search and Filters Section */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <BentoCard
-                icon="search"
-                title="Job Search"
-                description="Use smart filters to search for your perfect job."
-                className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
-              >
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                  }}
-                  className="mt-4 space-y-4"
-                >
-                  <div className="flex gap-3">
-                    <Input
-                      type="text"
-                      placeholder="Search for jobs (e.g., React remote)..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="flex-1 transition-all duration-200 focus:ring-2 focus:ring-primary/50"
-                    />
-                    <Button type="submit" variant="default" className="px-6 hover:scale-105 transition-transform duration-200">
-                      Search
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                        <SelectValue placeholder="Location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="remote">Remote</SelectItem>
-                        <SelectItem value="nyc">New York, NY</SelectItem>
-                        <SelectItem value="sf">San Francisco, CA</SelectItem>
-                        <SelectItem value="la">Los Angeles, CA</SelectItem>
-                        <SelectItem value="chicago">Chicago, IL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={salary} onValueChange={setSalary}>
-                      <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                        <SelectValue placeholder="Salary Range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
-                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
-                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
-                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
-                        <SelectItem value="150k+">$150k+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={jobType} onValueChange={setJobType}>
-                      <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                        <SelectValue placeholder="Job Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="frontend">Frontend</SelectItem>
-                        <SelectItem value="backend">Backend</SelectItem>
-                        <SelectItem value="fullstack">Full Stack</SelectItem>
-                        <SelectItem value="devops">DevOps</SelectItem>
-                        <SelectItem value="design">UI/UX Design</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </form>
-              </BentoCard>
-              
-              <BentoCard
-                icon="save"
-                title="Saved Filters"
-                description="Quick access to your favorite job searches."
-                className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
-              >
-                <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
-                  {savedFilters.map((filter) => (
-                    <div key={filter.id} className="flex justify-between items-center p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02] border border-transparent hover:border-primary/20">
-                      <span className="font-medium text-sm">{filter.name}</span>
-                      <span className="text-xs text-muted-foreground bg-accent/30 px-2 py-1 rounded-md">{filter.criteria}</span>
-                    </div>
-                  ))}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <Select value={location} onValueChange={setLocation}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
+                    <SelectValue placeholder="Location" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="remote">Remote</SelectItem>
+                    <SelectItem value="nyc">New York, NY</SelectItem>
+                    <SelectItem value="sf">San Francisco, CA</SelectItem>
+                    <SelectItem value="la">Los Angeles, CA</SelectItem>
+                    <SelectItem value="chicago">Chicago, IL</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={salary} onValueChange={setSalary}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
+                    <SelectValue placeholder="Salary Range" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="60k-80k">$60k - $80k</SelectItem>
+                    <SelectItem value="80k-100k">$80k - $100k</SelectItem>
+                    <SelectItem value="100k-120k">$100k - $120k</SelectItem>
+                    <SelectItem value="120k-150k">$120k - $150k</SelectItem>
+                    <SelectItem value="150k+">$150k+</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={jobType} onValueChange={setJobType}>
+                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
+                    <SelectValue placeholder="Job Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="frontend">Frontend</SelectItem>
+                    <SelectItem value="backend">Backend</SelectItem>
+                    <SelectItem value="fullstack">Full Stack</SelectItem>
+                    <SelectItem value="devops">DevOps</SelectItem>
+                    <SelectItem value="design">UI/UX Design</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </form>
+          </BentoCard>
+          <BentoCard
+            icon="save"
+            title="Saved Filters"
+            description="Quick access to your favorite job searches."
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
+          >
+            <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
+              {savedFilters.map((filter) => (
+                <div key={filter.id} className="flex justify-between items-center p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02] border border-transparent hover:border-primary/20">
+                  <span className="font-medium text-sm">{filter.name}</span>
+                  <span className="text-xs text-muted-foreground bg-accent/30 px-2 py-1 rounded-md">{filter.criteria}</span>
                 </div>
-              </BentoCard>
+              ))}
             </div>
+          </BentoCard>
+        </div>
 
-            {/* Job Results and Application Batches */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-              <BentoCard
-                icon="file-check"
-                title="Job Search Results"
-                description="Browse and apply to matching opportunities."
-                className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-green-200/30"
-              >
-                <div className="mt-4">
-                  <JobList jobs={jobResults} onApply={handleApply} />
-                </div>
-              </BentoCard>
-              
-              <BentoCard
-                icon="chart-bar"
-                title="ApplyGen Application Batches"
-                description="Track your job application progress in real-time."
-                className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-blue-200/30"
-              >
-                <div className="mt-4">
-                  {allBatchJobs.length === 0 ? (
-                    <div className="text-muted-foreground text-center py-12 flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
-                        <span className="text-2xl">📝</span>
-                      </div>
-                      <p className="text-sm">No jobs applied yet.</p>
-                      <p className="text-xs text-muted-foreground/60">Select jobs from the search results to start applying!</p>
-                    </div>
-                  ) : (
-                    <BackgroundJobBox jobs={allBatchJobs} />
-                  )}
-                </div>
-              </BentoCard>
+        {/* Parallel Job Results and Batch Processing */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <BentoCard
+            icon="file-check"
+            title="Job Search Results"
+            description="Browse and apply to matching opportunities."
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-green-200/30"
+          >
+            <div className="mt-4">
+              <JobList jobs={jobResults} onApply={handleApply} />
             </div>
-          </div>
+          </BentoCard>
+          <BentoCard
+            icon="chart-bar"
+            title="ApplyGen Application Batches"
+            description="Track your job application progress in real-time."
+            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-blue-200/30"
+          >
+            <div className="mt-4">
+              {allBatchJobs.length === 0 ? (
+                <div className="text-muted-foreground text-center py-12 flex flex-col items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
+                    <span className="text-2xl">📝</span>
+                  </div>
+                  <p className="text-sm">No jobs applied yet.</p>
+                  <p className="text-xs text-muted-foreground/60">Select jobs from the search results to start applying!</p>
+                </div>
+              ) : (
+                <BackgroundJobBox jobs={allBatchJobs} />
+              )}
+            </div>
+          </BentoCard>
         </div>
       </main>
 
