@@ -5,8 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobList } from "@/components/JobList";
-import { BackgroundJobBox, BackgroundJob } from "@/components/BackgroundJobBox";
+import { BatchManager } from "@/components/BatchManager";
 import { FloatingNavbar } from "@/components/FloatingNavbar";
+import { Job, JobBatch, BatchJob } from "@/types/batch";
+import { useToast } from "@/hooks/use-toast";
 
 const savedFilters = [
   {
@@ -41,7 +43,7 @@ const savedFilters = [
   },
 ];
 
-const staticJobResults = [
+const allJobs: Job[] = [
   {
     id: 1,
     title: "Frontend Engineer",
@@ -66,7 +68,6 @@ const staticJobResults = [
     salary: "$125,000",
     posted: "2025-06-13",
   },
-  // ... add at least 12 jobs for demo
   {
     id: 4,
     title: "Product Designer",
@@ -146,44 +147,165 @@ const Index = () => {
   const [location, setLocation] = React.useState("");
   const [salary, setSalary] = React.useState("");
   const [jobType, setJobType] = React.useState("");
-  const [jobBatches, setJobBatches] = React.useState<BackgroundJob[][]>([]);
+  const [appliedJobIds, setAppliedJobIds] = React.useState<Set<number>>(new Set());
+  const [batches, setBatches] = React.useState<JobBatch[]>([]);
+  const { toast } = useToast();
 
-  // Mock user data - in real app this would come from auth/settings
+  // Mock user data
   const user = {
     name: "Vishwas",
     tagline: "Full Stack Developer",
     jobTitle: "Software Engineer"
   };
 
-  const jobResults = React.useMemo(() => staticJobResults, []);
+  // Filter out applied jobs from available jobs
+  const availableJobs = React.useMemo(() => {
+    return allJobs.filter(job => !appliedJobIds.has(job.id));
+  }, [appliedJobIds]);
 
-  const allBatchJobs = React.useMemo(() => {
-    return jobBatches.flat();
-  }, [jobBatches]);
+  const generateBatchName = (jobs: Job[]) => {
+    const categories = jobs.map(job => {
+      if (job.title.toLowerCase().includes('frontend') || job.title.toLowerCase().includes('react') || job.title.toLowerCase().includes('ui')) {
+        return 'Frontend';
+      } else if (job.title.toLowerCase().includes('backend')) {
+        return 'Backend';
+      } else if (job.title.toLowerCase().includes('fullstack') || job.title.toLowerCase().includes('full stack')) {
+        return 'Full Stack';
+      } else if (job.title.toLowerCase().includes('design')) {
+        return 'Design';
+      }
+      return 'General';
+    });
 
-  const handleApply = (selectedJobs: typeof staticJobResults) => {
+    const mostCommon = categories.reduce((acc, category) => {
+      acc[category] = (acc[category] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    const dominantCategory = Object.keys(mostCommon).reduce((a, b) => 
+      mostCommon[a] > mostCommon[b] ? a : b
+    );
+
+    const batchNumber = batches.length + 1;
+    return `Batch #${batchNumber} - ${dominantCategory} Jobs`;
+  };
+
+  const handleApply = async (selectedJobs: Job[]) => {
     if (selectedJobs.length === 0) return;
-    const newBatch: BackgroundJob[] = selectedJobs.map((job) => ({
+
+    // Create new batch
+    const batchId = `batch-${Date.now()}`;
+    const batchJobs: BatchJob[] = selectedJobs.map(job => ({
       id: job.id,
       title: job.title,
-      status: "running" as const,
+      company: job.company,
+      location: job.location,
+      salary: job.salary,
+      status: 'preparing' as const,
     }));
 
-    setJobBatches((prev) => [...prev, newBatch]);
+    const newBatch: JobBatch = {
+      id: batchId,
+      name: generateBatchName(selectedJobs),
+      createdAt: new Date(),
+      status: 'pending',
+      jobs: batchJobs,
+      category: selectedJobs.length > 1 ? 'Mixed' : 'Single Application',
+      successRate: 0,
+      totalApplications: selectedJobs.length,
+    };
 
-    newBatch.forEach((job, i) => {
+    // Add jobs to applied set and create batch
+    setAppliedJobIds(prev => new Set([...prev, ...selectedJobs.map(j => j.id)]));
+    setBatches(prev => [...prev, newBatch]);
+
+    toast({
+      title: "Batch Created",
+      description: `${selectedJobs.length} jobs added to ${newBatch.name}`,
+    });
+
+    // Start processing the batch
+    setTimeout(() => {
+      setBatches(prev => prev.map(batch => 
+        batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
+      ));
+    }, 1000);
+
+    // Simulate job processing
+    batchJobs.forEach((job, index) => {
       setTimeout(() => {
-        setJobBatches((prev) => {
-          const batches = [...prev];
-          const lastBatchIdx = batches.length - 1;
-          if (lastBatchIdx < 0) return batches;
-          const batch = batches[lastBatchIdx].map((j) =>
-            j.id === job.id ? { ...j, status: "completed" as const } : j
+        setBatches(prev => prev.map(batch => {
+          if (batch.id !== batchId) return batch;
+          
+          const updatedJobs = batch.jobs.map(j => 
+            j.id === job.id ? { ...j, status: 'applying' as const, appliedAt: new Date() } : j
           );
-          batches[lastBatchIdx] = batch;
-          return batches;
-        });
-      }, 2000 + i * 1000);
+          
+          return { ...batch, jobs: updatedJobs };
+        }));
+      }, 2000 + index * 1000);
+
+      setTimeout(() => {
+        setBatches(prev => prev.map(batch => {
+          if (batch.id !== batchId) return batch;
+          
+          const isSuccess = Math.random() > 0.2; // 80% success rate
+          const updatedJobs = batch.jobs.map(j => 
+            j.id === job.id ? { 
+              ...j, 
+              status: isSuccess ? 'completed' as const : 'failed' as const,
+              failureReason: !isSuccess ? 'Application submission failed' : undefined
+            } : j
+          );
+          
+          const completedJobs = updatedJobs.filter(j => j.status === 'completed').length;
+          const allJobsProcessed = updatedJobs.every(j => j.status === 'completed' || j.status === 'failed');
+          
+          return { 
+            ...batch, 
+            jobs: updatedJobs,
+            successRate: Math.round((completedJobs / batch.totalApplications) * 100),
+            status: allJobsProcessed ? 'completed' as const : batch.status
+          };
+        }));
+      }, 4000 + index * 1000);
+    });
+  };
+
+  const handlePauseBatch = (batchId: string) => {
+    setBatches(prev => prev.map(batch => 
+      batch.id === batchId ? { ...batch, status: 'paused' as const } : batch
+    ));
+    toast({
+      title: "Batch Paused",
+      description: "Application processing has been paused",
+    });
+  };
+
+  const handleResumeBatch = (batchId: string) => {
+    setBatches(prev => prev.map(batch => 
+      batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
+    ));
+    toast({
+      title: "Batch Resumed",
+      description: "Application processing has been resumed",
+    });
+  };
+
+  const handleRetryBatch = (batchId: string) => {
+    setBatches(prev => prev.map(batch => {
+      if (batch.id !== batchId) return batch;
+      
+      const retriedJobs = batch.jobs.map(job => 
+        job.status === 'failed' ? { ...job, status: 'preparing' as const, failureReason: undefined } : job
+      );
+      
+      return { ...batch, jobs: retriedJobs, status: 'processing' as const };
+    }));
+    
+    toast({
+      title: "Retrying Failed Applications",
+      description: "Failed jobs will be processed again",
     });
   };
 
@@ -291,36 +413,31 @@ const Index = () => {
           </BentoCard>
         </div>
 
-        {/* Parallel Job Results and Batch Processing */}
+        {/* Job Results and Batch Management */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <BentoCard
             icon="file-check"
-            title="Job Search Results"
-            description="Browse and apply to matching opportunities."
+            title="Available Jobs"
+            description={`${availableJobs.length} jobs available for application.`}
             className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-green-200/30"
           >
             <div className="mt-4">
-              <JobList jobs={jobResults} onApply={handleApply} />
+              <JobList jobs={availableJobs} onApply={handleApply} />
             </div>
           </BentoCard>
           <BentoCard
-            icon="chart-bar"
-            title="ApplyGen Application Batches"
-            description="Track your job application progress in real-time."
+            icon="package"
+            title="Application Batches"
+            description="Manage and track your job application progress."
             className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-blue-200/30"
           >
-            <div className="mt-4">
-              {allBatchJobs.length === 0 ? (
-                <div className="text-muted-foreground text-center py-12 flex flex-col items-center gap-3">
-                  <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
-                    <span className="text-2xl">📝</span>
-                  </div>
-                  <p className="text-sm">No jobs applied yet.</p>
-                  <p className="text-xs text-muted-foreground/60">Select jobs from the search results to start applying!</p>
-                </div>
-              ) : (
-                <BackgroundJobBox jobs={allBatchJobs} />
-              )}
+            <div className="mt-4 max-h-96 overflow-y-auto">
+              <BatchManager
+                batches={batches}
+                onPauseBatch={handlePauseBatch}
+                onResumeBatch={handleResumeBatch}
+                onRetryBatch={handleRetryBatch}
+              />
             </div>
           </BentoCard>
         </div>
