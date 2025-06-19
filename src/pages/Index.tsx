@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -7,10 +6,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { JobList } from "@/components/JobList";
 import { BatchManager } from "@/components/BatchManager";
 import { FloatingNavbar } from "@/components/FloatingNavbar";
+import { ChatSearchBox } from "@/components/ChatSearchBox";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 const savedFilters = [
   {
@@ -164,6 +165,18 @@ const Index = () => {
   const availableJobs = React.useMemo(() => {
     return allJobs.filter(job => !appliedJobIds.has(job.id));
   }, [appliedJobIds]);
+
+  const handleChatSearch = (filters: { search?: string; location?: string; salary?: string; jobType?: string }) => {
+    if (filters.search) setSearch(filters.search);
+    if (filters.location) setLocation(filters.location);
+    if (filters.salary) setSalary(filters.salary);
+    if (filters.jobType) setJobType(filters.jobType);
+    
+    toast({
+      title: "Search Applied",
+      description: "AI has updated your search filters based on your request.",
+    });
+  };
 
   const generateBatchName = (jobs: Job[]) => {
     const categories = jobs.map(job => {
@@ -333,7 +346,7 @@ const Index = () => {
 
       <main className="w-full max-w-7xl mx-auto p-6 space-y-6">
         {/* Top Section - Search and Filters */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[280px]">
           {/* Job Search - Takes 2 columns */}
           <div className="lg:col-span-2">
             <Card className="h-full border-primary/20">
@@ -343,7 +356,7 @@ const Index = () => {
                   Job Search
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="space-y-4">
                 <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
                   <div className="flex gap-3">
                     <Input
@@ -396,6 +409,17 @@ const Index = () => {
                     </Select>
                   </div>
                 </form>
+                
+                <Separator />
+                
+                {/* AI Chat Search */}
+                <div>
+                  <div className="mb-3">
+                    <h4 className="text-sm font-medium text-muted-foreground">✨ AI Search Assistant</h4>
+                    <p className="text-xs text-muted-foreground">Describe your ideal job in natural language</p>
+                  </div>
+                  <ChatSearchBox onSearch={handleChatSearch} />
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -410,7 +434,7 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
+                <div className="space-y-2 max-h-[200px] overflow-y-auto">
                   {savedFilters.map((filter) => (
                     <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
                       <div className="flex justify-between items-start gap-2">
