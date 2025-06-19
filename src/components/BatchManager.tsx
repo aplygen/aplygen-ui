@@ -48,60 +48,65 @@ export const BatchManager: React.FC<BatchManagerProps> = ({
 
   if (batches.length === 0) {
     return (
-      <div className="h-full flex flex-col items-center justify-center text-center space-y-4">
-        <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center">
-          <Package className="w-8 h-8 text-muted-foreground" />
-        </div>
-        <div>
-          <h3 className="font-semibold">No application batches yet</h3>
-          <p className="text-sm text-muted-foreground">
-            Select jobs from the search results to start creating application batches
-          </p>
-        </div>
-      </div>
+      <Card className="border-2 border-primary/20">
+        <CardContent className="py-12">
+          <div className="text-center space-y-4">
+            <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center mx-auto">
+              <Package className="w-8 h-8 text-muted-foreground" />
+            </div>
+            <div>
+              <h3 className="font-semibold">No application batches yet</h3>
+              <p className="text-sm text-muted-foreground">
+                Select jobs from the search results to start creating application batches
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Header with filters */}
-      <div className="flex-shrink-0 mb-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <Package className="w-5 h-5" />
-          <h3 className="font-semibold">Application Batches ({batches.length})</h3>
-        </div>
-        
-        <div className="flex gap-3">
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40">
-              <Filter className="w-4 h-4 mr-2" />
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="processing">Processing</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="paused">Paused</SelectItem>
-              <SelectItem value="failed">Failed</SelectItem>
-            </SelectContent>
-          </Select>
+    <div className="space-y-6">
+      <Card className="border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="w-5 h-5" />
+            Application Batches ({batches.length})
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-3 mb-4">
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-40">
+                <Filter className="w-4 h-4 mr-2" />
+                <SelectValue placeholder="Filter by status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="paused">Paused</SelectItem>
+                <SelectItem value="failed">Failed</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="progress">By Progress</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="oldest">Oldest First</SelectItem>
+                <SelectItem value="progress">By Progress</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Batch Cards - Scrollable */}
-      <div className="flex-1 overflow-y-auto space-y-4">
+      <div className="space-y-4">
         {filteredBatches.map((batch) => (
           <BatchCard
             key={batch.id}
