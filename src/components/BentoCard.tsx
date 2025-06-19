@@ -1,15 +1,15 @@
-
 import * as React from "react";
-import { LucideIcon, Search, Save, ChartBar, FileCheck } from "lucide-react";
+import { LucideIcon, Search, Save, ChartBar, FileCheck, Package } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type IconName = "search" | "save" | "chart-bar" | "file-check";
+type IconName = "search" | "save" | "chart-bar" | "file-check" | "package";
 
 const iconMap: Record<IconName, LucideIcon> = {
   search: Search,
   save: Save,
   "chart-bar": ChartBar,
   "file-check": FileCheck,
+  package: Package,
 };
 
 const iconColors: Record<IconName, string> = {
@@ -17,6 +17,7 @@ const iconColors: Record<IconName, string> = {
   save: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
   "chart-bar": "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
   "file-check": "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
+  package: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
 };
 
 interface BentoCardProps extends React.HTMLAttributes<HTMLDivElement> {
