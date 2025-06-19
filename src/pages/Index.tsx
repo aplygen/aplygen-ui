@@ -9,6 +9,8 @@ import { BatchManager } from "@/components/BatchManager";
 import { FloatingNavbar } from "@/components/FloatingNavbar";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 const savedFilters = [
   {
@@ -329,117 +331,148 @@ const Index = () => {
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto p-6 flex flex-col gap-8">
-        {/* Enhanced Search and Filters Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <BentoCard
-            icon="search"
-            title="Job Search"
-            description="Use smart filters to search for your perfect job."
-            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
-          >
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-              }}
-              className="mt-4 space-y-4"
-            >
-              <div className="flex gap-3">
-                <Input
-                  type="text"
-                  placeholder="Search for jobs (e.g., React remote)..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="flex-1 transition-all duration-200 focus:ring-2 focus:ring-primary/50"
-                />
-                <Button type="submit" variant="default" className="px-6 hover:scale-105 transition-transform duration-200">
-                  Search
-                </Button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                    <SelectValue placeholder="Location" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="remote">Remote</SelectItem>
-                    <SelectItem value="nyc">New York, NY</SelectItem>
-                    <SelectItem value="sf">San Francisco, CA</SelectItem>
-                    <SelectItem value="la">Los Angeles, CA</SelectItem>
-                    <SelectItem value="chicago">Chicago, IL</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={salary} onValueChange={setSalary}>
-                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                    <SelectValue placeholder="Salary Range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="60k-80k">$60k - $80k</SelectItem>
-                    <SelectItem value="80k-100k">$80k - $100k</SelectItem>
-                    <SelectItem value="100k-120k">$100k - $120k</SelectItem>
-                    <SelectItem value="120k-150k">$120k - $150k</SelectItem>
-                    <SelectItem value="150k+">$150k+</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={jobType} onValueChange={setJobType}>
-                  <SelectTrigger className="transition-all duration-200 hover:border-primary/50">
-                    <SelectValue placeholder="Job Type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="frontend">Frontend</SelectItem>
-                    <SelectItem value="backend">Backend</SelectItem>
-                    <SelectItem value="fullstack">Full Stack</SelectItem>
-                    <SelectItem value="devops">DevOps</SelectItem>
-                    <SelectItem value="design">UI/UX Design</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </form>
-          </BentoCard>
-          <BentoCard
-            icon="save"
-            title="Saved Filters"
-            description="Quick access to your favorite job searches."
-            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-primary/20"
-          >
-            <div className="mt-3 space-y-2 max-h-48 overflow-y-auto">
-              {savedFilters.map((filter) => (
-                <div key={filter.id} className="flex justify-between items-center p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 hover:scale-[1.02] border border-transparent hover:border-primary/20">
-                  <span className="font-medium text-sm">{filter.name}</span>
-                  <span className="text-xs text-muted-foreground bg-accent/30 px-2 py-1 rounded-md">{filter.criteria}</span>
+      <main className="w-full max-w-7xl mx-auto p-6 space-y-6">
+        {/* Top Section - Search and Filters */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Job Search - Takes 2 columns */}
+          <div className="lg:col-span-2">
+            <Card className="h-full border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">🔍</span>
+                  Job Search
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+                  <div className="flex gap-3">
+                    <Input
+                      type="text"
+                      placeholder="Search for jobs (e.g., React remote)..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button type="submit" variant="default" className="px-6">
+                      Search
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Select value={location} onValueChange={setLocation}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="remote">Remote</SelectItem>
+                        <SelectItem value="nyc">New York, NY</SelectItem>
+                        <SelectItem value="sf">San Francisco, CA</SelectItem>
+                        <SelectItem value="la">Los Angeles, CA</SelectItem>
+                        <SelectItem value="chicago">Chicago, IL</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={salary} onValueChange={setSalary}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Salary Range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
+                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
+                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
+                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
+                        <SelectItem value="150k+">$150k+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Job Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="frontend">Frontend</SelectItem>
+                        <SelectItem value="backend">Backend</SelectItem>
+                        <SelectItem value="fullstack">Full Stack</SelectItem>
+                        <SelectItem value="devops">DevOps</SelectItem>
+                        <SelectItem value="design">UI/UX Design</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Saved Filters - Takes 1 column */}
+          <div>
+            <Card className="h-full border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">💾</span>
+                  Saved Filters
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {savedFilters.map((filter) => (
+                    <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {filter.criteria.split(', ').map((criterion, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {criterion}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </BentoCard>
+              </CardContent>
+            </Card>
+          </div>
         </div>
 
-        {/* Job Results and Batch Management */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <BentoCard
-            icon="file-check"
-            title="Available Jobs"
-            description={`${availableJobs.length} jobs available for application.`}
-            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-green-200/30"
-          >
-            <div className="mt-4">
-              <JobList jobs={availableJobs} onApply={handleApply} />
-            </div>
-          </BentoCard>
-          <BentoCard
-            icon="package"
-            title="Application Batches"
-            description="Manage and track your job application progress."
-            className="w-full hover:shadow-xl transition-all duration-300 hover:-translate-y-1 bg-gradient-to-br from-card to-card/80 border-blue-200/30"
-          >
-            <div className="mt-4 max-h-96 overflow-y-auto">
-              <BatchManager
-                batches={batches}
-                onPauseBatch={handlePauseBatch}
-                onResumeBatch={handleResumeBatch}
-                onRetryBatch={handleRetryBatch}
-              />
-            </div>
-          </BentoCard>
+        {/* Bottom Section - Jobs and Batches */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Available Jobs */}
+          <div>
+            <Card className="h-[600px] border-green-200/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">📋</span>
+                  Available Jobs
+                  <Badge variant="outline" className="ml-auto">
+                    {availableJobs.length} jobs
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="h-[calc(100%-80px)] overflow-hidden">
+                <JobList jobs={availableJobs} onApply={handleApply} />
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Application Batches */}
+          <div>
+            <Card className="h-[600px] border-blue-200/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">📦</span>
+                  Application Batches
+                  <Badge variant="outline" className="ml-auto">
+                    {batches.length} batches
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="h-[calc(100%-80px)] overflow-hidden">
+                <BatchManager
+                  batches={batches}
+                  onPauseBatch={handlePauseBatch}
+                  onResumeBatch={handleResumeBatch}
+                  onRetryBatch={handleRetryBatch}
+                />
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
 

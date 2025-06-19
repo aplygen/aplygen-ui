@@ -1,16 +1,17 @@
+
 import * as React from "react";
-import { Filter } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { ChevronDown, ChevronRight, MapPin, DollarSign, Calendar, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious 
-} from "@/components/ui/pagination";
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 type Job = {
@@ -27,27 +28,18 @@ interface JobListProps {
   onApply: (selectedJobs: Job[]) => void;
 }
 
-const JOBS_PER_PAGE = 6;
-
 export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
   const [selectedIds, setSelectedIds] = React.useState<number[]>([]);
-  const [currentPage, setCurrentPage] = React.useState(1);
+  const [expandedRows, setExpandedRows] = React.useState<number[]>([]);
   const [isApplying, setIsApplying] = React.useState(false);
 
-  const totalPages = Math.ceil(jobs.length / JOBS_PER_PAGE);
-  const startIndex = (currentPage - 1) * JOBS_PER_PAGE;
-  const endIndex = startIndex + JOBS_PER_PAGE;
-  const displayJobs = jobs.slice(startIndex, endIndex);
-
-  const allSelected = displayJobs.length > 0 && displayJobs.every(job => selectedIds.includes(job.id));
+  const allSelected = jobs.length > 0 && jobs.every(job => selectedIds.includes(job.id));
+  
   const toggleSelectAll = () => {
     if (allSelected) {
-      setSelectedIds(selectedIds.filter(id => !displayJobs.find(j => j.id === id)));
+      setSelectedIds([]);
     } else {
-      setSelectedIds([
-        ...selectedIds,
-        ...displayJobs.map(j => j.id).filter(id => !selectedIds.includes(id)),
-      ]);
+      setSelectedIds(jobs.map(j => j.id));
     }
   };
 
@@ -57,11 +49,18 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
     );
   };
 
+  const toggleExpanded = (jobId: number) => {
+    setExpandedRows(prev => 
+      prev.includes(jobId) 
+        ? prev.filter(id => id !== jobId)
+        : [...prev, jobId]
+    );
+  };
+
   const handleApply = async () => {
     setIsApplying(true);
     const selectedJobs = jobs.filter((job) => selectedIds.includes(job.id));
     
-    // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1000));
     
     onApply(selectedJobs);
@@ -69,142 +68,43 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
     setIsApplying(false);
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
+  if (jobs.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+        <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center mb-4">
+          <span className="text-3xl">🔍</span>
+        </div>
+        <div className="text-center">
+          <p className="font-medium mb-1">No jobs found</p>
+          <p className="text-sm text-muted-foreground/60">Try adjusting your search filters!</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full">
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 bg-primary/10 px-3 py-2 rounded-full">
-            <Filter className="w-4 h-4 text-primary" />
-            <span className="font-semibold text-sm text-primary">Found {jobs.length} jobs</span>
-          </div>
-        </div>
-        {displayJobs.length > 0 && (
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={toggleSelectAll}
-            className="hover:scale-105 transition-transform duration-200 border-primary/20 hover:border-primary/50"
-          >
-            <Checkbox
-              checked={allSelected}
-              className="mr-2"
-              tabIndex={-1}
-              onCheckedChange={toggleSelectAll}
-            />
-            {allSelected ? "Unselect All" : "Select All"}
-          </Button>
-        )}
-      </div>
-
-      {displayJobs.length === 0 ? (
-        <div className="text-muted-foreground text-center py-12 flex flex-col items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center">
-            <span className="text-3xl">🔍</span>
-          </div>
-          <div>
-            <p className="font-medium mb-1">No jobs found</p>
-            <p className="text-sm text-muted-foreground/60">Try adjusting your search filters!</p>
-          </div>
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            {displayJobs.map((job, index) => (
-              <Card
-                key={job.id}
-                className={cn(
-                  "cursor-pointer transition-all duration-300 hover:shadow-lg group border-2",
-                  "hover:-translate-y-1 hover:border-primary/30",
-                  selectedIds.includes(job.id) 
-                    ? "ring-2 ring-primary/50 border-primary/50 bg-primary/5" 
-                    : "border-border hover:border-primary/20",
-                  "animate-in slide-in-from-bottom-4 duration-300"
-                )}
-                style={{ animationDelay: `${index * 50}ms` }}
-                onClick={() => handleCheckbox(job.id)}
-              >
-                <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1 space-y-2">
-                      <CardTitle className="text-base font-bold group-hover:text-primary transition-colors duration-200">
-                        {job.title}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground font-medium">
-                        {job.company} • {job.location}
-                      </p>
-                    </div>
-                    <Checkbox
-                      checked={selectedIds.includes(job.id)}
-                      onCheckedChange={() => handleCheckbox(job.id)}
-                      onClick={(e) => e.stopPropagation()}
-                      className="scale-110"
-                    />
-                  </div>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <span className="bg-gradient-to-r from-green-100 to-green-50 text-green-700 px-3 py-1.5 rounded-full text-sm font-semibold border border-green-200">
-                      {job.salary}
-                    </span>
-                    <span className="text-xs text-muted-foreground bg-accent/50 px-2 py-1 rounded-md">
-                      {new Date(job.posted).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                    </span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {totalPages > 1 && (
-            <Pagination className="mt-6">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className={cn(
-                      "transition-all duration-200",
-                      currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer hover:scale-105"
-                    )}
-                  />
-                </PaginationItem>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      onClick={() => handlePageChange(page)}
-                      isActive={currentPage === page}
-                      className="cursor-pointer hover:scale-105 transition-transform duration-200"
-                    >
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>
-                ))}
-                <PaginationItem>
-                  <PaginationNext 
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className={cn(
-                      "transition-all duration-200",
-                      currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer hover:scale-105"
-                    )}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
-          )}
-        </>
-      )}
-
-      {selectedIds.length > 0 && (
-        <div className="mt-6 flex justify-center animate-in slide-in-from-bottom-4 duration-300">
+    <div className="h-full flex flex-col">
+      {/* Controls */}
+      <div className="flex items-center justify-between mb-4 pb-2 border-b">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={toggleSelectAll}
+          className="hover:scale-105 transition-transform duration-200"
+        >
+          <Checkbox
+            checked={allSelected}
+            className="mr-2"
+            tabIndex={-1}
+          />
+          {allSelected ? "Unselect All" : "Select All"}
+        </Button>
+        
+        {selectedIds.length > 0 && (
           <Button
-            type="button"
             onClick={handleApply}
-            variant="default"
             disabled={isApplying}
-            className="px-8 py-3 text-base font-semibold hover:scale-105 transition-all duration-200 bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg"
+            className="hover:scale-105 transition-transform duration-200"
           >
             {isApplying ? (
               <div className="flex items-center gap-2">
@@ -215,8 +115,108 @@ export const JobList: React.FC<JobListProps> = ({ jobs, onApply }) => {
               `Apply to selected (${selectedIds.length})`
             )}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Table */}
+      <div className="flex-1 overflow-auto">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-8"></TableHead>
+              <TableHead className="w-8"></TableHead>
+              <TableHead>Job Title</TableHead>
+              <TableHead>Company</TableHead>
+              <TableHead>Salary</TableHead>
+              <TableHead>Posted</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {jobs.map((job) => (
+              <React.Fragment key={job.id}>
+                <TableRow 
+                  className={cn(
+                    "cursor-pointer transition-all duration-200",
+                    selectedIds.includes(job.id) 
+                      ? "bg-primary/5 border-primary/30" 
+                      : "hover:bg-accent/50"
+                  )}
+                  onClick={() => handleCheckbox(job.id)}
+                >
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedIds.includes(job.id)}
+                      onCheckedChange={() => handleCheckbox(job.id)}
+                    />
+                  </TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleExpanded(job.id)}
+                      className="h-6 w-6 p-0"
+                    >
+                      {expandedRows.includes(job.id) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                  <TableCell className="font-medium">{job.title}</TableCell>
+                  <TableCell>{job.company}</TableCell>
+                  <TableCell>
+                    <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                      {job.salary}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {new Date(job.posted).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                  </TableCell>
+                </TableRow>
+                
+                {/* Expanded Row */}
+                {expandedRows.includes(job.id) && (
+                  <TableRow className="bg-accent/20">
+                    <TableCell colSpan={6} className="py-4">
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          <Building className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">Company</p>
+                            <p className="text-muted-foreground">{job.company}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <MapPin className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">Location</p>
+                            <p className="text-muted-foreground">{job.location}</p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <div>
+                            <p className="font-medium">Posted</p>
+                            <p className="text-muted-foreground">
+                              {new Date(job.posted).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-4 p-3 bg-accent/30 rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          Click the checkbox to select this job for batch application, or use the "Apply to selected" button to apply to multiple jobs at once.
+                        </p>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                )}
+              </React.Fragment>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
     </div>
   );
 };
