@@ -455,48 +455,45 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Bottom Section - Jobs and Batches */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Available Jobs */}
-          <div>
-            <Card className="h-[600px] border-green-200/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">📋</span>
-                  Available Jobs
-                  <Badge variant="outline" className="ml-auto">
-                    {availableJobs.length} jobs
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="h-[calc(100%-80px)] overflow-hidden">
-                <JobList jobs={availableJobs} onApply={handleApply} />
-              </CardContent>
-            </Card>
-          </div>
+        {/* Available Jobs Section - Full Width */}
+        <div className="w-full">
+          <Card className="h-[600px] border-green-200/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">📋</span>
+                Available Jobs
+                <Badge variant="outline" className="ml-auto">
+                  {availableJobs.length} jobs
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="h-[calc(100%-80px)] overflow-hidden">
+              <JobList jobs={availableJobs} onApply={handleApply} />
+            </CardContent>
+          </Card>
+        </div>
 
-          {/* Application Batches */}
-          <div>
-            <Card className="h-[600px] border-blue-200/30">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">📦</span>
-                  Application Batches
-                  <Badge variant="outline" className="ml-auto">
-                    {batches.length} batches
-                  </Badge>
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="h-[calc(100%-80px)] overflow-hidden">
-                <BatchManager
-                  batches={batches}
-                  onPauseBatch={handlePauseBatch}
-                  onResumeBatch={handleResumeBatch}
-                  onRetryBatch={handleRetryBatch}
-                />
-              </CardContent>
-            </Card>
-          </div>
+        {/* Application Batches Section - Full Width */}
+        <div className="w-full">
+          <Card className="h-[600px] border-blue-200/30">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">📦</span>
+                Application Batches
+                <Badge variant="outline" className="ml-auto">
+                  {batches.length} batches
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="h-[calc(100%-80px)] overflow-hidden">
+              <BatchManager
+                batches={batches}
+                onPauseBatch={handlePauseBatch}
+                onResumeBatch={handleResumeBatch}
+                onRetryBatch={handleRetryBatch}
+              />
+            </CardContent>
+          </Card>
         </div>
       </main>
 
