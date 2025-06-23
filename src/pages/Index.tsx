@@ -455,41 +455,38 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Jobs and Batches Section - Bento Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Available Jobs Bento Card */}
-          <BentoCard
-            icon="search"
-            title="Available Jobs"
-            description={`${availableJobs.length} jobs matching your criteria`}
-            className="h-[600px]"
-          >
-            <div className="h-[480px] -mx-8 -mb-8 mt-4">
-              <div className="h-full px-8 pb-8">
-                <JobList jobs={availableJobs} onApply={handleApply} />
-              </div>
+        {/* Available Jobs Section - Full Width Bento Card */}
+        <BentoCard
+          icon="search"
+          title="Available Jobs"
+          description={`${availableJobs.length} jobs matching your criteria`}
+          className="h-[600px]"
+        >
+          <div className="h-[480px] -mx-8 -mb-8 mt-4">
+            <div className="h-full px-8 pb-8">
+              <JobList jobs={availableJobs} onApply={handleApply} />
             </div>
-          </BentoCard>
+          </div>
+        </BentoCard>
 
-          {/* Application Batches Bento Card */}
-          <BentoCard
-            icon="package"
-            title="Application Batches"
-            description={`${batches.length} batches in progress or completed`}
-            className="h-[600px]"
-          >
-            <div className="h-[480px] -mx-8 -mb-8 mt-4">
-              <div className="h-full px-8 pb-8">
-                <BatchManager
-                  batches={batches}
-                  onPauseBatch={handlePauseBatch}
-                  onResumeBatch={handleResumeBatch}
-                  onRetryBatch={handleRetryBatch}
-                />
-              </div>
+        {/* Application Batches Section - Full Width Bento Card */}
+        <BentoCard
+          icon="package"
+          title="Application Batches"
+          description={`${batches.length} batches in progress or completed`}
+          className="h-[600px]"
+        >
+          <div className="h-[480px] -mx-8 -mb-8 mt-4">
+            <div className="h-full px-8 pb-8">
+              <BatchManager
+                batches={batches}
+                onPauseBatch={handlePauseBatch}
+                onResumeBatch={handleResumeBatch}
+                onRetryBatch={handleRetryBatch}
+              />
             </div>
-          </BentoCard>
-        </div>
+          </div>
+        </BentoCard>
       </main>
 
       {/* Bottom Navigation */}
