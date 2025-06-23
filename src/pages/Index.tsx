@@ -344,7 +344,7 @@ const Index = () => {
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto p-6 space-y-6">
+      <main className="w-full max-w-7xl mx-auto p-6 space-y-8">
         {/* Top Section - Search and Filters */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[280px]">
           {/* Job Search - Takes 2 columns */}
@@ -455,45 +455,40 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Available Jobs Section - Full Width */}
-        <div className="w-full">
-          <Card className="h-[600px] border-green-200/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">📋</span>
-                Available Jobs
-                <Badge variant="outline" className="ml-auto">
-                  {availableJobs.length} jobs
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="h-[calc(100%-80px)] overflow-hidden">
-              <JobList jobs={availableJobs} onApply={handleApply} />
-            </CardContent>
-          </Card>
-        </div>
+        {/* Jobs and Batches Section - Bento Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Available Jobs Bento Card */}
+          <BentoCard
+            icon="search"
+            title="Available Jobs"
+            description={`${availableJobs.length} jobs matching your criteria`}
+            className="h-[600px]"
+          >
+            <div className="h-[480px] -mx-8 -mb-8 mt-4">
+              <div className="h-full px-8 pb-8">
+                <JobList jobs={availableJobs} onApply={handleApply} />
+              </div>
+            </div>
+          </BentoCard>
 
-        {/* Application Batches Section - Full Width */}
-        <div className="w-full">
-          <Card className="h-[600px] border-blue-200/30">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">📦</span>
-                Application Batches
-                <Badge variant="outline" className="ml-auto">
-                  {batches.length} batches
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="h-[calc(100%-80px)] overflow-hidden">
-              <BatchManager
-                batches={batches}
-                onPauseBatch={handlePauseBatch}
-                onResumeBatch={handleResumeBatch}
-                onRetryBatch={handleRetryBatch}
-              />
-            </CardContent>
-          </Card>
+          {/* Application Batches Bento Card */}
+          <BentoCard
+            icon="package"
+            title="Application Batches"
+            description={`${batches.length} batches in progress or completed`}
+            className="h-[600px]"
+          >
+            <div className="h-[480px] -mx-8 -mb-8 mt-4">
+              <div className="h-full px-8 pb-8">
+                <BatchManager
+                  batches={batches}
+                  onPauseBatch={handlePauseBatch}
+                  onResumeBatch={handleResumeBatch}
+                  onRetryBatch={handleRetryBatch}
+                />
+              </div>
+            </div>
+          </BentoCard>
         </div>
       </main>
 
