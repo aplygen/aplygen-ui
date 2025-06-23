@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -13,137 +14,35 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
-const savedFilters = [
-  {
-    id: 1,
-    name: "Remote React Jobs",
-    criteria: "Remote, React, $90k+",
-  },
-  {
-    id: 2,
-    name: "Frontend (Remote or NYC)",
-    criteria: "Frontend, NYC/Remote, $100k+",
-  },
-  {
-    id: 3,
-    name: "Senior Backend Engineer",
-    criteria: "Backend, Node.js, $120k+",
-  },
-  {
-    id: 4,
-    name: "Full Stack Developer",
-    criteria: "Full Stack, TypeScript, $110k+",
-  },
-  {
-    id: 5,
-    name: "UI/UX Designer",
-    criteria: "Design, Figma, $85k+",
-  },
-  {
-    id: 6,
-    name: "DevOps Engineer",
-    criteria: "AWS, Docker, $130k+",
-  },
+const SAVED_FILTERS = [
+  { id: 1, name: "Remote React Jobs", criteria: "Remote, React, $90k+" },
+  { id: 2, name: "Frontend (Remote or NYC)", criteria: "Frontend, NYC/Remote, $100k+" },
+  { id: 3, name: "Senior Backend Engineer", criteria: "Backend, Node.js, $120k+" },
+  { id: 4, name: "Full Stack Developer", criteria: "Full Stack, TypeScript, $110k+" },
+  { id: 5, name: "UI/UX Designer", criteria: "Design, Figma, $85k+" },
+  { id: 6, name: "DevOps Engineer", criteria: "AWS, Docker, $130k+" },
 ];
 
-const allJobs: Job[] = [
-  {
-    id: 1,
-    title: "Frontend Engineer",
-    company: "InnovateX",
-    location: "Remote",
-    salary: "$120,000",
-    posted: "2025-06-10",
-  },
-  {
-    id: 2,
-    title: "React Developer",
-    company: "Acme Corp.",
-    location: "New York, NY",
-    salary: "$110,000",
-    posted: "2025-06-12",
-  },
-  {
-    id: 3,
-    title: "UI Engineer",
-    company: "BrightTech",
-    location: "Remote",
-    salary: "$125,000",
-    posted: "2025-06-13",
-  },
-  {
-    id: 4,
-    title: "Product Designer",
-    company: "DesignLoose",
-    location: "NYC",
-    salary: "$105,000",
-    posted: "2025-06-12",
-  },
-  {
-    id: 5,
-    title: "Fullstack Engineer",
-    company: "CodeBase",
-    location: "Remote",
-    salary: "$130,000",
-    posted: "2025-06-11",
-  },
-  {
-    id: 6,
-    title: "Frontend Developer",
-    company: "WebGen",
-    location: "Remote",
-    salary: "$100,000",
-    posted: "2025-06-11",
-  },
-  {
-    id: 7,
-    title: "Senior UI Engineer",
-    company: "BloomLogic",
-    location: "Remote",
-    salary: "$130,000",
-    posted: "2025-06-10",
-  },
-  {
-    id: 8,
-    title: "Junior React Dev",
-    company: "QuickApps",
-    location: "Remote",
-    salary: "$85,000",
-    posted: "2025-06-09",
-  },
-  {
-    id: 9,
-    title: "Frontend Architect",
-    company: "CoreSystems",
-    location: "NYC",
-    salary: "$145,000",
-    posted: "2025-06-08",
-  },
-  {
-    id: 10,
-    title: "UI/UX Designer",
-    company: "PixelPush",
-    location: "NYC",
-    salary: "$102,000",
-    posted: "2025-06-10",
-  },
-  {
-    id: 11,
-    title: "Web Engineer",
-    company: "SkyForge",
-    location: "Remote",
-    salary: "$110,000",
-    posted: "2025-06-13",
-  },
-  {
-    id: 12,
-    title: "Frontend Lead",
-    company: "AppPilot",
-    location: "Remote",
-    salary: "$135,000",
-    posted: "2025-06-09",
-  },
+const MOCK_JOBS: Job[] = [
+  { id: 1, title: "Frontend Engineer", company: "InnovateX", location: "Remote", salary: "$120,000", posted: "2025-06-10" },
+  { id: 2, title: "React Developer", company: "Acme Corp.", location: "New York, NY", salary: "$110,000", posted: "2025-06-12" },
+  { id: 3, title: "UI Engineer", company: "BrightTech", location: "Remote", salary: "$125,000", posted: "2025-06-13" },
+  { id: 4, title: "Product Designer", company: "DesignLoose", location: "NYC", salary: "$105,000", posted: "2025-06-12" },
+  { id: 5, title: "Fullstack Engineer", company: "CodeBase", location: "Remote", salary: "$130,000", posted: "2025-06-11" },
+  { id: 6, title: "Frontend Developer", company: "WebGen", location: "Remote", salary: "$100,000", posted: "2025-06-11" },
+  { id: 7, title: "Senior UI Engineer", company: "BloomLogic", location: "Remote", salary: "$130,000", posted: "2025-06-10" },
+  { id: 8, title: "Junior React Dev", company: "QuickApps", location: "Remote", salary: "$85,000", posted: "2025-06-09" },
+  { id: 9, title: "Frontend Architect", company: "CoreSystems", location: "NYC", salary: "$145,000", posted: "2025-06-08" },
+  { id: 10, title: "UI/UX Designer", company: "PixelPush", location: "NYC", salary: "$102,000", posted: "2025-06-10" },
+  { id: 11, title: "Web Engineer", company: "SkyForge", location: "Remote", salary: "$110,000", posted: "2025-06-13" },
+  { id: 12, title: "Frontend Lead", company: "AppPilot", location: "Remote", salary: "$135,000", posted: "2025-06-09" },
 ];
+
+const USER_DATA = {
+  name: "Vishwas",
+  tagline: "Full Stack Developer",
+  jobTitle: "Software Engineer"
+};
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
@@ -154,19 +53,16 @@ const Index = () => {
   const [batches, setBatches] = React.useState<JobBatch[]>([]);
   const { toast } = useToast();
 
-  // Mock user data
-  const user = {
-    name: "Vishwas",
-    tagline: "Full Stack Developer",
-    jobTitle: "Software Engineer"
-  };
-
-  // Filter out applied jobs from available jobs
   const availableJobs = React.useMemo(() => {
-    return allJobs.filter(job => !appliedJobIds.has(job.id));
+    return MOCK_JOBS.filter(job => !appliedJobIds.has(job.id));
   }, [appliedJobIds]);
 
-  const handleChatSearch = (filters: { search?: string; location?: string; salary?: string; jobType?: string }) => {
+  const handleChatSearch = React.useCallback((filters: { 
+    search?: string; 
+    location?: string; 
+    salary?: string; 
+    jobType?: string 
+  }) => {
     if (filters.search) setSearch(filters.search);
     if (filters.location) setLocation(filters.location);
     if (filters.salary) setSalary(filters.salary);
@@ -176,39 +72,33 @@ const Index = () => {
       title: "Search Applied",
       description: "AI has updated your search filters based on your request.",
     });
-  };
+  }, [toast]);
 
-  const generateBatchName = (jobs: Job[]) => {
+  const generateBatchName = React.useCallback((jobs: Job[]) => {
     const categories = jobs.map(job => {
-      if (job.title.toLowerCase().includes('frontend') || job.title.toLowerCase().includes('react') || job.title.toLowerCase().includes('ui')) {
-        return 'Frontend';
-      } else if (job.title.toLowerCase().includes('backend')) {
-        return 'Backend';
-      } else if (job.title.toLowerCase().includes('fullstack') || job.title.toLowerCase().includes('full stack')) {
-        return 'Full Stack';
-      } else if (job.title.toLowerCase().includes('design')) {
-        return 'Design';
-      }
+      const title = job.title.toLowerCase();
+      if (title.includes('frontend') || title.includes('react') || title.includes('ui')) return 'Frontend';
+      if (title.includes('backend')) return 'Backend';
+      if (title.includes('fullstack') || title.includes('full stack')) return 'Full Stack';
+      if (title.includes('design')) return 'Design';
       return 'General';
     });
 
-    const mostCommon = categories.reduce((acc, category) => {
+    const categoryCount = categories.reduce((acc, category) => {
       acc[category] = (acc[category] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
 
-    const dominantCategory = Object.keys(mostCommon).reduce((a, b) => 
-      mostCommon[a] > mostCommon[b] ? a : b
+    const dominantCategory = Object.keys(categoryCount).reduce((a, b) => 
+      categoryCount[a] > categoryCount[b] ? a : b
     );
 
-    const batchNumber = batches.length + 1;
-    return `Batch #${batchNumber} - ${dominantCategory} Jobs`;
-  };
+    return `Batch #${batches.length + 1} - ${dominantCategory} Jobs`;
+  }, [batches.length]);
 
-  const handleApply = async (selectedJobs: Job[]) => {
+  const handleApply = React.useCallback(async (selectedJobs: Job[]) => {
     if (selectedJobs.length === 0) return;
 
-    // Create new batch
     const batchId = `batch-${Date.now()}`;
     const batchJobs: BatchJob[] = selectedJobs.map(job => ({
       id: job.id,
@@ -230,7 +120,6 @@ const Index = () => {
       totalApplications: selectedJobs.length,
     };
 
-    // Add jobs to applied set and create batch
     setAppliedJobIds(prev => new Set([...prev, ...selectedJobs.map(j => j.id)]));
     setBatches(prev => [...prev, newBatch]);
 
@@ -239,7 +128,7 @@ const Index = () => {
       description: `${selectedJobs.length} jobs added to ${newBatch.name}`,
     });
 
-    // Start processing the batch
+    // Start processing simulation
     setTimeout(() => {
       setBatches(prev => prev.map(batch => 
         batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
@@ -264,7 +153,7 @@ const Index = () => {
         setBatches(prev => prev.map(batch => {
           if (batch.id !== batchId) return batch;
           
-          const isSuccess = Math.random() > 0.2; // 80% success rate
+          const isSuccess = Math.random() > 0.2;
           const updatedJobs = batch.jobs.map(j => 
             j.id === job.id ? { 
               ...j, 
@@ -285,57 +174,56 @@ const Index = () => {
         }));
       }, 4000 + index * 1000);
     });
-  };
+  }, [generateBatchName, toast]);
 
-  const handlePauseBatch = (batchId: string) => {
-    setBatches(prev => prev.map(batch => 
-      batch.id === batchId ? { ...batch, status: 'paused' as const } : batch
-    ));
-    toast({
-      title: "Batch Paused",
-      description: "Application processing has been paused",
-    });
-  };
-
-  const handleResumeBatch = (batchId: string) => {
-    setBatches(prev => prev.map(batch => 
-      batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
-    ));
-    toast({
-      title: "Batch Resumed",
-      description: "Application processing has been resumed",
-    });
-  };
-
-  const handleRetryBatch = (batchId: string) => {
+  const handleBatchAction = React.useCallback((batchId: string, action: 'pause' | 'resume' | 'retry') => {
     setBatches(prev => prev.map(batch => {
       if (batch.id !== batchId) return batch;
       
-      const retriedJobs = batch.jobs.map(job => 
-        job.status === 'failed' ? { ...job, status: 'preparing' as const, failureReason: undefined } : job
-      );
-      
-      return { ...batch, jobs: retriedJobs, status: 'processing' as const };
+      switch (action) {
+        case 'pause':
+          return { ...batch, status: 'paused' as const };
+        case 'resume':
+          return { ...batch, status: 'processing' as const };
+        case 'retry':
+          const retriedJobs = batch.jobs.map(job => 
+            job.status === 'failed' ? { ...job, status: 'preparing' as const, failureReason: undefined } : job
+          );
+          return { ...batch, jobs: retriedJobs, status: 'processing' as const };
+        default:
+          return batch;
+      }
     }));
     
+    const messages = {
+      pause: "Batch Paused",
+      resume: "Batch Resumed", 
+      retry: "Retrying Failed Applications"
+    };
+    
     toast({
-      title: "Retrying Failed Applications",
-      description: "Failed jobs will be processed again",
+      title: messages[action],
+      description: `Application processing has been ${action}d`,
     });
-  };
+  }, [toast]);
+
+  const handleFormSubmit = React.useCallback((e: React.FormEvent) => {
+    e.preventDefault();
+    // Form submission logic would go here
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 pb-20">
-      {/* Hero Section with Personalized Greeting */}
+      {/* Hero Section */}
       <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
         <div className="text-center space-y-4">
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-3 border border-primary/20">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
-              {user.name.charAt(0)}
+              {USER_DATA.name.charAt(0)}
             </div>
             <div className="text-left">
-              <p className="text-lg font-semibold">Hi, {user.name}! 👋</p>
-              <p className="text-sm text-muted-foreground">{user.tagline}</p>
+              <p className="text-lg font-semibold">Hi, {USER_DATA.name}! 👋</p>
+              <p className="text-sm text-muted-foreground">{USER_DATA.tagline}</p>
             </div>
           </div>
           <p className="text-muted-foreground max-w-md mx-auto">
@@ -345,9 +233,9 @@ const Index = () => {
       </div>
 
       <main className="w-full max-w-7xl mx-auto p-6 space-y-8">
-        {/* Top Section - Search and Filters */}
+        {/* Search and Filters Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[280px]">
-          {/* Job Search - Takes 2 columns */}
+          {/* Job Search */}
           <div className="lg:col-span-2">
             <Card className="h-full border-primary/20">
               <CardHeader>
@@ -357,7 +245,7 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <form onSubmit={(e) => e.preventDefault()} className="space-y-4">
+                <form onSubmit={handleFormSubmit} className="space-y-4">
                   <div className="flex gap-3">
                     <Input
                       type="text"
@@ -412,7 +300,6 @@ const Index = () => {
                 
                 <Separator />
                 
-                {/* AI Chat Search */}
                 <div>
                   <div className="mb-3">
                     <h4 className="text-sm font-medium text-muted-foreground">✨ AI Search Assistant</h4>
@@ -424,7 +311,7 @@ const Index = () => {
             </Card>
           </div>
 
-          {/* Saved Filters - Takes 1 column */}
+          {/* Saved Filters */}
           <div>
             <Card className="h-full border-primary/20">
               <CardHeader>
@@ -435,7 +322,7 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                  {savedFilters.map((filter) => (
+                  {SAVED_FILTERS.map((filter) => (
                     <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
                       <div className="flex justify-between items-start gap-2">
                         <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
@@ -455,7 +342,7 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Available Jobs Section - Full Width Bento Card */}
+        {/* Available Jobs Section */}
         <BentoCard
           icon="search"
           title="Available Jobs"
@@ -469,7 +356,7 @@ const Index = () => {
           </div>
         </BentoCard>
 
-        {/* Application Batches Section - Full Width Bento Card */}
+        {/* Application Batches Section */}
         <BentoCard
           icon="package"
           title="Application Batches"
@@ -480,16 +367,15 @@ const Index = () => {
             <div className="h-full px-8 pb-8">
               <BatchManager
                 batches={batches}
-                onPauseBatch={handlePauseBatch}
-                onResumeBatch={handleResumeBatch}
-                onRetryBatch={handleRetryBatch}
+                onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+                onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+                onRetryBatch={(id) => handleBatchAction(id, 'retry')}
               />
             </div>
           </div>
         </BentoCard>
       </main>
 
-      {/* Bottom Navigation */}
       <FloatingNavbar />
     </div>
   );
