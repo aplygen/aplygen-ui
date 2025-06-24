@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Briefcase, FileText, Settings, Moon, Sun, User } from "lucide-react";
+import { Home, Settings, Moon, Sun, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -9,8 +9,7 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
-  { title: "Applications", url: "/applications", icon: Briefcase },
-  { title: "Resumes", url: "/resumes", icon: FileText },
+  { title: "Profile", url: "/profile", icon: User },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
@@ -79,29 +78,6 @@ export function FloatingNavbar() {
           <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none">
             <div className="bg-foreground text-background text-xs font-medium px-2 py-1 rounded-md whitespace-nowrap shadow-lg">
               {theme === "dark" ? "Light mode" : "Dark mode"}
-              <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-foreground"></div>
-            </div>
-          </div>
-        </Button>
-
-        {/* Profile */}
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className="group relative w-12 h-12 rounded-xl hover:scale-105 transition-all duration-200 hover:bg-accent/50" 
-          aria-label="Profile"
-        >
-          <Avatar className="h-7 w-7">
-            <AvatarImage src="" alt="Profile" />
-            <AvatarFallback className="bg-gradient-to-br from-primary/20 to-primary/10">
-              <User className="w-4 h-4 text-primary" />
-            </AvatarFallback>
-          </Avatar>
-          
-          {/* Hover tooltip */}
-          <div className="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none">
-            <div className="bg-foreground text-background text-xs font-medium px-2 py-1 rounded-md whitespace-nowrap shadow-lg">
-              Profile
               <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-2 border-r-2 border-t-2 border-transparent border-t-foreground"></div>
             </div>
           </div>
