@@ -211,7 +211,7 @@ const Index = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
       {/* Hero Section */}
       <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
         <div className="text-center space-y-4">
@@ -230,9 +230,9 @@ const Index = () => {
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto p-6 space-y-8">
+      <main className="w-full max-w-7xl mx-auto px-6 space-y-8 pb-32">
         {/* Search and Filters Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[280px]">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Job Search */}
           <div className="lg:col-span-2">
             <Card className="h-full border-primary/20">
@@ -341,37 +341,33 @@ const Index = () => {
         </div>
 
         {/* Available Jobs Section */}
-        <div className="w-full">
-          <BentoCard
-            icon="search"
-            title="Available Jobs"
-            description={`${availableJobs.length} jobs matching your criteria`}
-            className="min-h-[500px]"
-          >
-            <div className="mt-4 h-[400px] overflow-hidden">
-              <JobList jobs={availableJobs} onApply={handleApply} />
-            </div>
-          </BentoCard>
-        </div>
+        <BentoCard
+          icon="search"
+          title="Available Jobs"
+          description={`${availableJobs.length} jobs matching your criteria`}
+          className="w-full"
+        >
+          <div className="h-[400px] overflow-hidden">
+            <JobList jobs={availableJobs} onApply={handleApply} />
+          </div>
+        </BentoCard>
 
         {/* Application Batches Section */}
-        <div className="w-full">
-          <BentoCard
-            icon="package"
-            title="Application Batches"
-            description={`${batches.length} batches in progress or completed`}
-            className="min-h-[500px]"
-          >
-            <div className="mt-4 h-[400px] overflow-hidden">
-              <BatchManager
-                batches={batches}
-                onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-                onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-                onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-              />
-            </div>
-          </BentoCard>
-        </div>
+        <BentoCard
+          icon="package"
+          title="Application Batches"
+          description={`${batches.length} batches in progress or completed`}
+          className="w-full"
+        >
+          <div className="h-[400px] overflow-hidden">
+            <BatchManager
+              batches={batches}
+              onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+              onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+              onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+            />
+          </div>
+        </BentoCard>
       </main>
     </div>
   );
