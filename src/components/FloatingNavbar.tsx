@@ -1,7 +1,7 @@
 
 import * as React from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { Home, Settings, Moon, Sun, User } from "lucide-react";
+import { Home, Settings, Moon, Sun, User, FileText, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -9,13 +9,22 @@ import { cn } from "@/lib/utils";
 
 const navItems = [
   { title: "Home", url: "/", icon: Home },
+  { title: "Resume", url: "/resume", icon: FileText },
   { title: "Profile", url: "/profile", icon: User },
+  { title: "Q&A", url: "/questions", icon: HelpCircle },
   { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function FloatingNavbar() {
   const location = useLocation();
   const { theme, setTheme } = useTheme();
+
+  // Don't show navbar on sign in/up pages
+  const hideNavbar = ['/signin', '/signup'].includes(location.pathname);
+  
+  if (hideNavbar) {
+    return null;
+  }
 
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     cn(
@@ -27,7 +36,7 @@ export function FloatingNavbar() {
     );
 
   return (
-    <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-background/95 backdrop-blur-xl border-2 border-primary/20 rounded-2xl px-6 py-3 shadow-2xl animate-in slide-in-from-bottom-4 duration-500">
+    <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-background/95 backdrop-blur-xl border-2 border-primary/20 rounded-2xl px-6 py-3 shadow-2xl">
       <div className="flex items-center gap-2">
         {/* Navigation Items */}
         {navItems.map((item) => (
