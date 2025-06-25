@@ -24,27 +24,38 @@ const FloatingNavbar = () => {
 
   return (
     <TooltipProvider>
-      <nav className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-background/95 backdrop-blur-md border border-border/50 rounded-full px-6 py-3 shadow-lg">
-          <div className="flex items-center space-x-6">
+      <nav className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="bg-background/80 backdrop-blur-xl border border-border/40 rounded-2xl px-4 py-3 shadow-2xl shadow-black/10">
+          <div className="flex items-center space-x-2">
             {navItems.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <Tooltip key={item.href} delayDuration={300}>
+                <Tooltip key={item.href} delayDuration={200}>
                   <TooltipTrigger asChild>
                     <Link
                       to={item.href}
                       className={cn(
-                        "flex items-center justify-center w-10 h-10 rounded-full transition-all duration-200",
+                        "relative flex items-center justify-center w-12 h-12 rounded-xl transition-all duration-300 ease-out group",
+                        "hover:scale-105 active:scale-95",
                         isActive
-                          ? "bg-primary text-primary-foreground shadow-md"
-                          : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                          ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25 scale-105"
+                          : "text-muted-foreground hover:text-foreground hover:bg-accent/60"
                       )}
                     >
-                      <item.icon className="h-5 w-5" />
+                      <item.icon className={cn(
+                        "h-5 w-5 transition-all duration-300",
+                        isActive ? "scale-110" : "group-hover:scale-110"
+                      )} />
+                      {isActive && (
+                        <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-primary-foreground rounded-full animate-pulse" />
+                      )}
                     </Link>
                   </TooltipTrigger>
-                  <TooltipContent side="top" className="bg-background border border-border shadow-md">
+                  <TooltipContent 
+                    side="top" 
+                    className="bg-background/95 backdrop-blur-sm border border-border shadow-xl animate-in fade-in-0 zoom-in-95 duration-200"
+                    sideOffset={8}
+                  >
                     <p className="text-sm font-medium">{item.label}</p>
                   </TooltipContent>
                 </Tooltip>
