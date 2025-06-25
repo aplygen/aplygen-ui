@@ -11,6 +11,7 @@ import Settings from "./pages/Settings";
 import Profile from "./pages/Profile";
 import Resume from "./pages/Resume";
 import Questions from "./pages/Questions";
+import Logs from "./pages/Logs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/profile" element={<Profile />} />
           <Route path="/resume" element={<Resume />} />
           <Route path="/questions" element={<Questions />} />
+          <Route path="/logs" element={<Logs />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
         <FloatingNavbar />

@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -6,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { JobList } from "@/components/JobList";
 import { BatchManager } from "@/components/BatchManager";
-import { FloatingNavbar } from "@/components/FloatingNavbar";
 import { ChatSearchBox } from "@/components/ChatSearchBox";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
@@ -343,28 +341,28 @@ const Index = () => {
         </div>
 
         {/* Available Jobs Section */}
-        <BentoCard
-          icon="search"
-          title="Available Jobs"
-          description={`${availableJobs.length} jobs matching your criteria`}
-          className="h-[600px]"
-        >
-          <div className="h-[480px] -mx-8 -mb-8 mt-4">
-            <div className="h-full px-8 pb-8">
+        <div className="w-full">
+          <BentoCard
+            icon="search"
+            title="Available Jobs"
+            description={`${availableJobs.length} jobs matching your criteria`}
+            className="min-h-[500px]"
+          >
+            <div className="mt-4 h-[400px] overflow-hidden">
               <JobList jobs={availableJobs} onApply={handleApply} />
             </div>
-          </div>
-        </BentoCard>
+          </BentoCard>
+        </div>
 
         {/* Application Batches Section */}
-        <BentoCard
-          icon="package"
-          title="Application Batches"
-          description={`${batches.length} batches in progress or completed`}
-          className="h-[600px]"
-        >
-          <div className="h-[480px] -mx-8 -mb-8 mt-4">
-            <div className="h-full px-8 pb-8">
+        <div className="w-full">
+          <BentoCard
+            icon="package"
+            title="Application Batches"
+            description={`${batches.length} batches in progress or completed`}
+            className="min-h-[500px]"
+          >
+            <div className="mt-4 h-[400px] overflow-hidden">
               <BatchManager
                 batches={batches}
                 onPauseBatch={(id) => handleBatchAction(id, 'pause')}
@@ -372,8 +370,8 @@ const Index = () => {
                 onRetryBatch={(id) => handleBatchAction(id, 'retry')}
               />
             </div>
-          </div>
-        </BentoCard>
+          </BentoCard>
+        </div>
       </main>
 
       <FloatingNavbar />
