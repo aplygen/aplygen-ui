@@ -373,8 +373,6 @@ const Index = () => {
           </BentoCard>
         </div>
       </main>
-
-      <FloatingNavbar />
     </div>
   );
 };
