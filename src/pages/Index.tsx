@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -231,7 +232,7 @@ const Index = () => {
       </div>
 
       <main className="w-full max-w-7xl mx-auto px-6 space-y-8 pb-32">
-        {/* Search and Filters Section */}
+        {/* Search and Chat Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Job Search */}
           <div className="lg:col-span-2">
@@ -295,50 +296,57 @@ const Index = () => {
                     </Select>
                   </div>
                 </form>
-                
-                <Separator />
-                
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* AI Chat Assistant - Expanded */}
+          <div>
+            <Card className="h-full border-primary/20">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <span className="text-2xl">✨</span>
+                  AI Search Assistant
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
                 <div>
                   <div className="mb-3">
-                    <h4 className="text-sm font-medium text-muted-foreground">✨ AI Search Assistant</h4>
-                    <p className="text-xs text-muted-foreground">Describe your ideal job in natural language</p>
+                    <p className="text-sm text-muted-foreground">Describe your ideal job in natural language</p>
                   </div>
                   <ChatSearchBox onSearch={handleChatSearch} />
                 </div>
               </CardContent>
             </Card>
           </div>
-
-          {/* Saved Filters */}
-          <div>
-            <Card className="h-full border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">💾</span>
-                  Saved Filters
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-2 max-h-[200px] overflow-y-auto">
-                  {SAVED_FILTERS.map((filter) => (
-                    <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
-                      <div className="flex justify-between items-start gap-2">
-                        <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {filter.criteria.split(', ').map((criterion, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {criterion}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
+
+        {/* Saved Filters Section - Now as a BentoCard */}
+        <BentoCard
+          icon="save"
+          title="Saved Filters"
+          description={`${SAVED_FILTERS.length} saved search criteria`}
+          className="w-full"
+        >
+          <div className="h-[300px] overflow-hidden">
+            <div className="space-y-3 max-h-full overflow-y-auto pr-2">
+              {SAVED_FILTERS.map((filter) => (
+                <div key={filter.id} className="p-4 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
+                  </div>
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {filter.criteria.split(', ').map((criterion, index) => (
+                      <Badge key={index} variant="outline" className="text-xs">
+                        {criterion}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </BentoCard>
 
         {/* Available Jobs Section */}
         <BentoCard
