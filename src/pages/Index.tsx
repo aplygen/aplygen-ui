@@ -231,19 +231,20 @@ const Index = () => {
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto px-6 space-y-8 pb-32">
-        {/* Search and Chat Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Job Search */}
-          <div className="lg:col-span-2">
-            <Card className="h-full border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">🔍</span>
-                  Job Search
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+      <main className="w-full max-w-7xl mx-auto px-6 space-y-6 pb-32">
+        {/* Top Row - Search & Filters + Chat */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Combined Job Search & Saved Filters */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">🔍</span>
+                Job Search & Filters
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Search Form */}
+              <div className="space-y-4">
                 <form onSubmit={handleFormSubmit} className="space-y-4">
                   <div className="flex gap-3">
                     <Input
@@ -296,86 +297,86 @@ const Index = () => {
                     </Select>
                   </div>
                 </form>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
 
-          {/* AI Chat Assistant - Expanded */}
-          <div>
-            <Card className="h-full border-primary/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <span className="text-2xl">✨</span>
-                  AI Search Assistant
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div>
-                  <div className="mb-3">
-                    <p className="text-sm text-muted-foreground">Describe your ideal job in natural language</p>
-                  </div>
+              <Separator />
+
+              {/* Saved Filters */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💾</span>
+                  <h4 className="font-semibold">Saved Filters ({SAVED_FILTERS.length})</h4>
+                </div>
+                <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-2">
+                  {SAVED_FILTERS.map((filter) => (
+                    <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {filter.criteria.split(', ').map((criterion, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {criterion}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* AI Chat Assistant */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">✨</span>
+                AI Search Assistant
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Describe your ideal job in natural language</p>
+                <div className="h-[300px] overflow-hidden">
                   <ChatSearchBox onSearch={handleChatSearch} />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Saved Filters Section - Now as a BentoCard */}
-        <BentoCard
-          icon="save"
-          title="Saved Filters"
-          description={`${SAVED_FILTERS.length} saved search criteria`}
-          className="w-full"
-        >
-          <div className="h-[300px] overflow-hidden">
-            <div className="space-y-3 max-h-full overflow-y-auto pr-2">
-              {SAVED_FILTERS.map((filter) => (
-                <div key={filter.id} className="p-4 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
-                  <div className="flex justify-between items-start gap-2">
-                    <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {filter.criteria.split(', ').map((criterion, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {criterion}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
+        {/* Bottom Row - Jobs & Batches */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Available Jobs */}
+          <BentoCard
+            icon="search"
+            title="Available Jobs"
+            description={`${availableJobs.length} jobs matching your criteria`}
+            className="w-full"
+          >
+            <div className="h-[450px] overflow-hidden">
+              <JobList jobs={availableJobs} onApply={handleApply} />
             </div>
-          </div>
-        </BentoCard>
+          </BentoCard>
 
-        {/* Available Jobs Section */}
-        <BentoCard
-          icon="search"
-          title="Available Jobs"
-          description={`${availableJobs.length} jobs matching your criteria`}
-          className="w-full"
-        >
-          <div className="h-[400px] overflow-hidden">
-            <JobList jobs={availableJobs} onApply={handleApply} />
-          </div>
-        </BentoCard>
-
-        {/* Application Batches Section */}
-        <BentoCard
-          icon="package"
-          title="Application Batches"
-          description={`${batches.length} batches in progress or completed`}
-          className="w-full"
-        >
-          <div className="h-[400px] overflow-hidden">
-            <BatchManager
-              batches={batches}
-              onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-              onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-              onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-            />
-          </div>
-        </BentoCard>
+          {/* Application Batches */}
+          <BentoCard
+            icon="package"
+            title="Application Batches"
+            description={`${batches.length} batches in progress or completed`}
+            className="w-full"
+          >
+            <div className="h-[450px] overflow-hidden">
+              <BatchManager
+                batches={batches}
+                onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+                onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+                onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+              />
+            </div>
+          </BentoCard>
+        </div>
       </main>
     </div>
   );
