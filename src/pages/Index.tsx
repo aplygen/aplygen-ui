@@ -1,7 +1,5 @@
 import * as React from "react";
-import { BentoCard } from "@/components/BentoCard";
-import { BatchManager } from "@/components/BatchManager";
-import { JobChatPanel } from "@/components/JobChatPanel";
+import { JobChatInterface } from "@/components/JobChatInterface";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
 
@@ -26,9 +24,6 @@ const USER_DATA = {
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
-  const [location, setLocation] = React.useState("");
-  const [salary, setSalary] = React.useState("");
-  const [jobType, setJobType] = React.useState("");
   const [appliedJobIds, setAppliedJobIds] = React.useState<Set<number>>(new Set());
   const [batches, setBatches] = React.useState<JobBatch[]>([]);
   const { toast } = useToast();
@@ -187,41 +182,19 @@ const Index = () => {
         </div>
       </div>
 
-      {/* Main Dashboard */}
-      <main className="w-full max-w-7xl mx-auto px-6 pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-140px)]">
-          {/* Left Panel - Job Search & Chat */}
-          <div className="h-full">
-            <JobChatPanel
-              jobs={availableJobs}
-              onApply={handleApply}
-              search={search}
-              setSearch={setSearch}
-              location={location}
-              setLocation={setLocation}
-              salary={salary}
-              setSalary={setSalary}
-              jobType={jobType}
-              setJobType={setJobType}
-            />
-          </div>
-
-          {/* Right Panel - Application Batches */}
-          <BentoCard
-            icon="package"
-            title="Application Batches"
-            description={`${batches.length} batches in progress or completed`}
-            className="h-full"
-          >
-            <div className="h-full overflow-hidden">
-              <BatchManager
-                batches={batches}
-                onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-                onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-                onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-              />
-            </div>
-          </BentoCard>
+      {/* Main Chat Interface */}
+      <main className="w-full max-w-5xl mx-auto px-6 pb-8">
+        <div className="h-[calc(100vh-140px)]">
+          <JobChatInterface
+            jobs={availableJobs}
+            batches={batches}
+            onApply={handleApply}
+            onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+            onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+            onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+            search={search}
+            setSearch={setSearch}
+          />
         </div>
       </main>
     </div>
