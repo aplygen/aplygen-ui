@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
 import { Input } from "@/components/ui/input";
@@ -212,132 +213,161 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
-      {/* Compact Hero Section */}
-      <div className="w-full max-w-[1600px] mx-auto px-4 pt-4 pb-2">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold">
+      {/* Hero Section */}
+      <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
+        <div className="text-center space-y-4">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-3 border border-primary/20">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
               {USER_DATA.name.charAt(0)}
             </div>
-            <div>
+            <div className="text-left">
               <p className="text-lg font-semibold">Hi, {USER_DATA.name}! 👋</p>
               <p className="text-sm text-muted-foreground">{USER_DATA.tagline}</p>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-muted-foreground">Ready to find your next opportunity?</p>
-          </div>
+          <p className="text-muted-foreground max-w-md mx-auto">
+            Ready to find your next opportunity? Let's get you connected with the perfect job.
+          </p>
         </div>
       </div>
 
-      <main className="w-full max-w-[1600px] mx-auto px-4 space-y-4">
-        {/* Top Section - Search & Filters in a compact horizontal layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[200px]">
-          {/* Job Search - Compact */}
-          <Card className="border-primary/20 col-span-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <span className="text-xl">🔍</span>
-                Job Search & Quick Filters
+      <main className="w-full max-w-7xl mx-auto px-6 space-y-6 pb-32">
+        {/* Top Row - Search & Filters + Chat */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Combined Job Search & Saved Filters */}
+          <Card className="border-primary/20">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">🔍</span>
+                Job Search & Filters
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <form onSubmit={handleFormSubmit} className="space-y-3">
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Search jobs..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="flex-1 h-9"
-                  />
-                  <Button type="submit" size="sm" className="px-4">
-                    Search
-                  </Button>
+            <CardContent className="space-y-6">
+              {/* Search Form */}
+              <div className="space-y-4">
+                <form onSubmit={handleFormSubmit} className="space-y-4">
+                  <div className="flex gap-3">
+                    <Input
+                      type="text"
+                      placeholder="Search for jobs (e.g., React remote)..."
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="flex-1"
+                    />
+                    <Button type="submit" variant="default" className="px-6">
+                      Search
+                    </Button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <Select value={location} onValueChange={setLocation}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Location" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="remote">Remote</SelectItem>
+                        <SelectItem value="nyc">New York, NY</SelectItem>
+                        <SelectItem value="sf">San Francisco, CA</SelectItem>
+                        <SelectItem value="la">Los Angeles, CA</SelectItem>
+                        <SelectItem value="chicago">Chicago, IL</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={salary} onValueChange={setSalary}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Salary Range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
+                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
+                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
+                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
+                        <SelectItem value="150k+">$150k+</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Select value={jobType} onValueChange={setJobType}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Job Type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="frontend">Frontend</SelectItem>
+                        <SelectItem value="backend">Backend</SelectItem>
+                        <SelectItem value="fullstack">Full Stack</SelectItem>
+                        <SelectItem value="devops">DevOps</SelectItem>
+                        <SelectItem value="design">UI/UX Design</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </form>
+              </div>
+
+              <Separator />
+
+              {/* Saved Filters */}
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💾</span>
+                  <h4 className="font-semibold">Saved Filters ({SAVED_FILTERS.length})</h4>
                 </div>
-                <div className="grid grid-cols-4 gap-2">
-                  <Select value={location} onValueChange={setLocation}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Location" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="remote">Remote</SelectItem>
-                      <SelectItem value="nyc">New York, NY</SelectItem>
-                      <SelectItem value="sf">San Francisco, CA</SelectItem>
-                      <SelectItem value="la">Los Angeles, CA</SelectItem>
-                      <SelectItem value="chicago">Chicago, IL</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={salary} onValueChange={setSalary}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Salary" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="60k-80k">$60k - $80k</SelectItem>
-                      <SelectItem value="80k-100k">$80k - $100k</SelectItem>
-                      <SelectItem value="100k-120k">$100k - $120k</SelectItem>
-                      <SelectItem value="120k-150k">$120k - $150k</SelectItem>
-                      <SelectItem value="150k+">$150k+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Select value={jobType} onValueChange={setJobType}>
-                    <SelectTrigger className="h-9">
-                      <SelectValue placeholder="Job Type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="frontend">Frontend</SelectItem>
-                      <SelectItem value="backend">Backend</SelectItem>
-                      <SelectItem value="fullstack">Full Stack</SelectItem>
-                      <SelectItem value="devops">DevOps</SelectItem>
-                      <SelectItem value="design">UI/UX Design</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <Button variant="outline" size="sm" className="h-9">
-                    Clear
-                  </Button>
+                <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-2">
+                  {SAVED_FILTERS.map((filter) => (
+                    <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mt-2">
+                        {filter.criteria.split(', ').map((criterion, index) => (
+                          <Badge key={index} variant="outline" className="text-xs">
+                            {criterion}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </form>
+              </div>
             </CardContent>
           </Card>
 
-          {/* AI Chat Assistant - Compact */}
+          {/* AI Chat Assistant */}
           <Card className="border-primary/20">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg flex items-center gap-2">
-                <span className="text-xl">✨</span>
-                AI Assistant
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <span className="text-2xl">✨</span>
+                AI Search Assistant
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="h-[120px] overflow-hidden">
-                <ChatSearchBox onSearch={handleChatSearch} />
+              <div className="space-y-3">
+                <p className="text-sm text-muted-foreground">Describe your ideal job in natural language</p>
+                <div className="h-[300px] overflow-hidden">
+                  <ChatSearchBox onSearch={handleChatSearch} />
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Main Content - Two Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-[calc(100vh-300px)] min-h-[600px]">
-          {/* Left Column - Available Jobs */}
+        {/* Bottom Row - Jobs & Batches */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          {/* Available Jobs */}
           <BentoCard
             icon="search"
             title="Available Jobs"
             description={`${availableJobs.length} jobs matching your criteria`}
-            className="h-full"
+            className="w-full"
           >
-            <div className="h-[calc(100%-80px)] overflow-hidden">
+            <div className="h-[450px] overflow-hidden">
               <JobList jobs={availableJobs} onApply={handleApply} />
             </div>
           </BentoCard>
 
-          {/* Right Column - Application Batches */}
+          {/* Application Batches */}
           <BentoCard
             icon="package"
             title="Application Batches"
             description={`${batches.length} batches in progress or completed`}
-            className="h-full"
+            className="w-full"
           >
-            <div className="h-[calc(100%-80px)] overflow-hidden">
+            <div className="h-[450px] overflow-hidden">
               <BatchManager
                 batches={batches}
                 onPauseBatch={(id) => handleBatchAction(id, 'pause')}
@@ -347,34 +377,6 @@ const Index = () => {
             </div>
           </BentoCard>
         </div>
-
-        {/* Bottom Section - Saved Filters */}
-        <Card className="border-primary/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <span className="text-xl">💾</span>
-              Saved Filters ({SAVED_FILTERS.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-              {SAVED_FILTERS.map((filter) => (
-                <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
-                  <div className="flex justify-between items-start gap-2">
-                    <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
-                  </div>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {filter.criteria.split(', ').map((criterion, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {criterion}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </main>
     </div>
   );
