@@ -1,26 +1,9 @@
-
 import * as React from "react";
 import { BentoCard } from "@/components/BentoCard";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { JobList } from "@/components/JobList";
 import { BatchManager } from "@/components/BatchManager";
-import { ChatSearchBox } from "@/components/ChatSearchBox";
+import { JobChatPanel } from "@/components/JobChatPanel";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
-
-const SAVED_FILTERS = [
-  { id: 1, name: "Remote React Jobs", criteria: "Remote, React, $90k+" },
-  { id: 2, name: "Frontend (Remote or NYC)", criteria: "Frontend, NYC/Remote, $100k+" },
-  { id: 3, name: "Senior Backend Engineer", criteria: "Backend, Node.js, $120k+" },
-  { id: 4, name: "Full Stack Developer", criteria: "Full Stack, TypeScript, $110k+" },
-  { id: 5, name: "UI/UX Designer", criteria: "Design, Figma, $85k+" },
-  { id: 6, name: "DevOps Engineer", criteria: "AWS, Docker, $130k+" },
-];
 
 const MOCK_JOBS: Job[] = [
   { id: 1, title: "Frontend Engineer", company: "InnovateX", location: "Remote", salary: "$120,000", posted: "2025-06-10" },
@@ -33,8 +16,6 @@ const MOCK_JOBS: Job[] = [
   { id: 8, title: "Junior React Dev", company: "QuickApps", location: "Remote", salary: "$85,000", posted: "2025-06-09" },
   { id: 9, title: "Frontend Architect", company: "CoreSystems", location: "NYC", salary: "$145,000", posted: "2025-06-08" },
   { id: 10, title: "UI/UX Designer", company: "PixelPush", location: "NYC", salary: "$102,000", posted: "2025-06-10" },
-  { id: 11, title: "Web Engineer", company: "SkyForge", location: "Remote", salary: "$110,000", posted: "2025-06-13" },
-  { id: 12, title: "Frontend Lead", company: "AppPilot", location: "Remote", salary: "$135,000", posted: "2025-06-09" },
 ];
 
 const USER_DATA = {
@@ -55,23 +36,6 @@ const Index = () => {
   const availableJobs = React.useMemo(() => {
     return MOCK_JOBS.filter(job => !appliedJobIds.has(job.id));
   }, [appliedJobIds]);
-
-  const handleChatSearch = React.useCallback((filters: { 
-    search?: string; 
-    location?: string; 
-    salary?: string; 
-    jobType?: string 
-  }) => {
-    if (filters.search) setSearch(filters.search);
-    if (filters.location) setLocation(filters.location);
-    if (filters.salary) setSalary(filters.salary);
-    if (filters.jobType) setJobType(filters.jobType);
-    
-    toast({
-      title: "Search Applied",
-      description: "AI has updated your search filters based on your request.",
-    });
-  }, [toast]);
 
   const generateBatchName = React.useCallback((jobs: Job[]) => {
     const categories = jobs.map(job => {
@@ -206,168 +170,50 @@ const Index = () => {
     });
   }, [toast]);
 
-  const handleFormSubmit = React.useCallback((e: React.FormEvent) => {
-    e.preventDefault();
-    // Form submission logic would go here
-  }, []);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
-      {/* Hero Section */}
-      <div className="w-full max-w-7xl mx-auto px-6 pt-8 pb-6">
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-3 border border-primary/20">
+      {/* Compact Hero Section */}
+      <div className="w-full max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-center">
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-2 border border-primary/20">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
               {USER_DATA.name.charAt(0)}
             </div>
-            <div className="text-left">
-              <p className="text-lg font-semibold">Hi, {USER_DATA.name}! 👋</p>
-              <p className="text-sm text-muted-foreground">{USER_DATA.tagline}</p>
+            <div>
+              <p className="font-semibold">Hi, {USER_DATA.name}! 👋</p>
+              <p className="text-xs text-muted-foreground">{USER_DATA.tagline}</p>
             </div>
           </div>
-          <p className="text-muted-foreground max-w-md mx-auto">
-            Ready to find your next opportunity? Let's get you connected with the perfect job.
-          </p>
         </div>
       </div>
 
-      <main className="w-full max-w-7xl mx-auto px-6 space-y-6 pb-32">
-        {/* Top Row - Search & Filters + Chat */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* Combined Job Search & Saved Filters */}
-          <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">🔍</span>
-                Job Search & Filters
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Search Form */}
-              <div className="space-y-4">
-                <form onSubmit={handleFormSubmit} className="space-y-4">
-                  <div className="flex gap-3">
-                    <Input
-                      type="text"
-                      placeholder="Search for jobs (e.g., React remote)..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button type="submit" variant="default" className="px-6">
-                      Search
-                    </Button>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Location" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="remote">Remote</SelectItem>
-                        <SelectItem value="nyc">New York, NY</SelectItem>
-                        <SelectItem value="sf">San Francisco, CA</SelectItem>
-                        <SelectItem value="la">Los Angeles, CA</SelectItem>
-                        <SelectItem value="chicago">Chicago, IL</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={salary} onValueChange={setSalary}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Salary Range" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="60k-80k">$60k - $80k</SelectItem>
-                        <SelectItem value="80k-100k">$80k - $100k</SelectItem>
-                        <SelectItem value="100k-120k">$100k - $120k</SelectItem>
-                        <SelectItem value="120k-150k">$120k - $150k</SelectItem>
-                        <SelectItem value="150k+">$150k+</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={jobType} onValueChange={setJobType}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Job Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="frontend">Frontend</SelectItem>
-                        <SelectItem value="backend">Backend</SelectItem>
-                        <SelectItem value="fullstack">Full Stack</SelectItem>
-                        <SelectItem value="devops">DevOps</SelectItem>
-                        <SelectItem value="design">UI/UX Design</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </form>
-              </div>
+      {/* Main Dashboard */}
+      <main className="w-full max-w-7xl mx-auto px-6 pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-[calc(100vh-140px)]">
+          {/* Left Panel - Job Search & Chat */}
+          <div className="h-full">
+            <JobChatPanel
+              jobs={availableJobs}
+              onApply={handleApply}
+              search={search}
+              setSearch={setSearch}
+              location={location}
+              setLocation={setLocation}
+              salary={salary}
+              setSalary={setSalary}
+              jobType={jobType}
+              setJobType={setJobType}
+            />
+          </div>
 
-              <Separator />
-
-              {/* Saved Filters */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <span className="text-lg">💾</span>
-                  <h4 className="font-semibold">Saved Filters ({SAVED_FILTERS.length})</h4>
-                </div>
-                <div className="grid grid-cols-1 gap-2 max-h-[200px] overflow-y-auto pr-2">
-                  {SAVED_FILTERS.map((filter) => (
-                    <div key={filter.id} className="p-3 hover:bg-accent/50 rounded-lg cursor-pointer transition-all duration-200 border border-transparent hover:border-primary/20 group">
-                      <div className="flex justify-between items-start gap-2">
-                        <span className="font-medium text-sm group-hover:text-primary transition-colors">{filter.name}</span>
-                      </div>
-                      <div className="flex flex-wrap gap-1 mt-2">
-                        {filter.criteria.split(', ').map((criterion, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {criterion}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* AI Chat Assistant */}
-          <Card className="border-primary/20">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">✨</span>
-                AI Search Assistant
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <p className="text-sm text-muted-foreground">Describe your ideal job in natural language</p>
-                <div className="h-[300px] overflow-hidden">
-                  <ChatSearchBox onSearch={handleChatSearch} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Bottom Row - Jobs & Batches */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {/* Available Jobs */}
-          <BentoCard
-            icon="search"
-            title="Available Jobs"
-            description={`${availableJobs.length} jobs matching your criteria`}
-            className="w-full"
-          >
-            <div className="h-[450px] overflow-hidden">
-              <JobList jobs={availableJobs} onApply={handleApply} />
-            </div>
-          </BentoCard>
-
-          {/* Application Batches */}
+          {/* Right Panel - Application Batches */}
           <BentoCard
             icon="package"
             title="Application Batches"
             description={`${batches.length} batches in progress or completed`}
-            className="w-full"
+            className="h-full"
           >
-            <div className="h-[450px] overflow-hidden">
+            <div className="h-full overflow-hidden">
               <BatchManager
                 batches={batches}
                 onPauseBatch={(id) => handleBatchAction(id, 'pause')}
