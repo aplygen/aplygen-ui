@@ -190,9 +190,10 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
 
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Header with Tabs */}
-        <div className="p-4 border-b bg-white">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        {/* Tabs Component - Properly wrapping TabsContent */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+          {/* Header with Tabs */}
+          <div className="p-4 border-b bg-white">
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="jobs" className="flex items-center gap-2">
                 <Search className="h-4 w-4" />
@@ -203,11 +204,9 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                 Application Batches ({batches.length})
               </TabsTrigger>
             </TabsList>
-          </Tabs>
-        </div>
+          </div>
 
-        {/* Content Area */}
-        <div className="flex-1 flex flex-col min-h-0">
+          {/* Content Area */}
           <TabsContent value="jobs" className="flex-1 flex flex-col m-0 p-4 space-y-4">
             {/* Jobs Grid */}
             <div className="flex-1 overflow-y-auto">
@@ -268,7 +267,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
               onRetryBatch={onRetryBatch}
             />
           </TabsContent>
-        </div>
+        </Tabs>
 
         {/* Bottom Section */}
         <div className="p-4 border-t bg-white space-y-3">
