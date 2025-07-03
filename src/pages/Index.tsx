@@ -166,10 +166,10 @@ const Index = () => {
   }, [toast]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-accent/10">
-      {/* Compact Hero Section */}
-      <div className="w-full max-w-7xl mx-auto px-6 py-4">
-        <div className="flex items-center justify-center">
+    <div className="h-screen bg-gradient-to-br from-background via-background to-accent/10 flex flex-col">
+      {/* Compact Header */}
+      <div className="flex-shrink-0 p-4 border-b bg-white/50 backdrop-blur-sm">
+        <div className="max-w-7xl mx-auto flex items-center justify-center">
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-primary/10 to-accent/10 rounded-full px-6 py-2 border border-primary/20">
             <div className="w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 flex items-center justify-center text-white font-bold text-sm">
               {USER_DATA.name.charAt(0)}
@@ -183,20 +183,18 @@ const Index = () => {
       </div>
 
       {/* Main Chat Interface */}
-      <main className="w-full max-w-5xl mx-auto px-6 pb-8">
-        <div className="h-[calc(100vh-140px)]">
-          <JobChatInterface
-            jobs={availableJobs}
-            batches={batches}
-            onApply={handleApply}
-            onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-            onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-            onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-            search={search}
-            setSearch={setSearch}
-          />
-        </div>
-      </main>
+      <div className="flex-1 min-h-0">
+        <JobChatInterface
+          jobs={availableJobs}
+          batches={batches}
+          onApply={handleApply}
+          onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+          onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+          onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+          search={search}
+          setSearch={setSearch}
+        />
+      </div>
     </div>
   );
 };
