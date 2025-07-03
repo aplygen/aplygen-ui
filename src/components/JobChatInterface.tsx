@@ -1,3 +1,4 @@
+
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -185,7 +186,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
   };
 
   return (
-    <div className="h-full flex bg-white">
+    <div className="h-screen flex bg-white">
       {/* Sidebar */}
       <ChatSidebar
         sessions={chatSessions}
@@ -194,7 +195,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
         onNewSession={handleNewSession}
       />
 
-      {/* Main Chat Area */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Header with User Profile */}
         <div className="p-4 border-b bg-white flex items-center justify-between">
@@ -218,116 +219,99 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
           </div>
         </div>
 
-        {/* Tabs Component */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-          {/* Tabs Header */}
-          <div className="p-4 border-b bg-white">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="chat" className="flex items-center gap-2">
-                <MessageSquare className="h-4 w-4" />
-                Chat Only
-              </TabsTrigger>
-              <TabsTrigger value="jobs" className="flex items-center gap-2">
-                <Search className="h-4 w-4" />
-                Jobs ({jobs.length})
-              </TabsTrigger>
-              <TabsTrigger value="batches" className="flex items-center gap-2">
-                <Package className="h-4 w-4" />
-                Batches ({batches.length})
-              </TabsTrigger>
-            </TabsList>
-          </div>
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Tabs Component */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+            {/* Tabs Header */}
+            <div className="p-4 border-b bg-white">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="chat" className="flex items-center gap-2">
+                  <MessageSquare className="h-4 w-4" />
+                  Chat Only
+                </TabsTrigger>
+                <TabsTrigger value="jobs" className="flex items-center gap-2">
+                  <Search className="h-4 w-4" />
+                  Jobs ({jobs.length})
+                </TabsTrigger>
+                <TabsTrigger value="batches" className="flex items-center gap-2">
+                  <Package className="h-4 w-4" />
+                  Batches ({batches.length})
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
-          {/* Chat Only View */}
-          <TabsContent value="chat" className="flex-1 flex flex-col m-0 p-4">
-            <div className="flex-1 overflow-y-auto border rounded-lg p-4 bg-gray-50">
-              <div className="space-y-4">
-                {messages.map((message) => (
-                  <div key={message.id} className={cn(
-                    "flex gap-3",
-                    message.type === 'user' ? 'justify-end' : 'justify-start'
-                  )}>
-                    <div className={cn(
-                      "flex gap-3 max-w-[80%]",
-                      message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
-                    )}>
-                      <div className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
-                        message.type === 'user' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-secondary text-secondary-foreground'
+            {/* Tab Content */}
+            <div className="flex-1 overflow-hidden">
+              {/* Chat Only View */}
+              <TabsContent value="chat" className="h-full flex flex-col m-0 p-4">
+                <div className="flex-1 overflow-y-auto">
+                  <div className="space-y-4">
+                    {messages.map((message) => (
+                      <div key={message.id} className={cn(
+                        "flex gap-3",
+                        message.type === 'user' ? 'justify-end' : 'justify-start'
                       )}>
-                        {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                        <div className={cn(
+                          "flex gap-3 max-w-[80%]",
+                          message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
+                        )}>
+                          <div className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                            message.type === 'user' 
+                              ? 'bg-primary text-primary-foreground' 
+                              : 'bg-secondary text-secondary-foreground'
+                          )}>
+                            {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                          </div>
+                          <div className={cn(
+                            "px-4 py-3 rounded-lg",
+                            message.type === 'user'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-white border shadow-sm'
+                          )}>
+                            {message.content}
+                          </div>
+                        </div>
                       </div>
-                      <div className={cn(
-                        "px-4 py-3 rounded-lg",
-                        message.type === 'user'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'bg-white border shadow-sm'
-                      )}>
-                        {message.content}
-                      </div>
-                    </div>
+                    ))}
+                    <div ref={messagesEndRef} />
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
-            </div>
-          </TabsContent>
+                </div>
+              </TabsContent>
 
-          {/* Jobs View */}
-          <TabsContent value="jobs" className="flex-1 flex flex-col m-0 p-4 space-y-4">
-            {/* Jobs Grid */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                {jobs.map((job) => (
-                  <JobCard
-                    key={job.id}
-                    job={job}
-                    isSelected={selectedJobIds.has(job.id)}
-                    isApplied={appliedJobIds.has(job.id)}
-                    onToggleSelect={toggleJobSelection}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Mini Chat Messages */}
-            <div className="max-h-32 overflow-y-auto border rounded-lg p-3 bg-gray-50">
-              <div className="space-y-2">
-                {messages.slice(-3).map((message) => (
-                  <div key={message.id} className={cn(
-                    "flex gap-2 text-sm",
-                    message.type === 'user' ? 'justify-end' : 'justify-start'
-                  )}>
-                    <div className={cn(
-                      "px-3 py-1 rounded-lg max-w-[70%]",
-                      message.type === 'user'
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-white border'
-                    )}>
-                      {message.content}
-                    </div>
+              {/* Jobs View */}
+              <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
+                <div className="flex-1 overflow-y-auto">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                    {jobs.map((job) => (
+                      <JobCard
+                        key={job.id}
+                        job={job}
+                        isSelected={selectedJobIds.has(job.id)}
+                        isApplied={appliedJobIds.has(job.id)}
+                        onToggleSelect={toggleJobSelection}
+                      />
+                    ))}
                   </div>
-                ))}
-                <div ref={messagesEndRef} />
-              </div>
+                </div>
+              </TabsContent>
+
+              {/* Batches View */}
+              <TabsContent value="batches" className="h-full m-0 p-4">
+                <BatchManager
+                  batches={batches}
+                  onPauseBatch={onPauseBatch}
+                  onResumeBatch={onResumeBatch}
+                  onRetryBatch={onRetryBatch}
+                />
+              </TabsContent>
             </div>
-          </TabsContent>
+          </Tabs>
+        </div>
 
-          {/* Batches View */}
-          <TabsContent value="batches" className="flex-1 m-0 p-4">
-            <BatchManager
-              batches={batches}
-              onPauseBatch={onPauseBatch}
-              onResumeBatch={onResumeBatch}
-              onRetryBatch={onRetryBatch}
-            />
-          </TabsContent>
-        </Tabs>
-
-        {/* Bottom Section - Chat Input */}
-        <div className="p-4 border-t bg-white space-y-3">
+        {/* Bottom Chat Input - Fixed at bottom like Lovable */}
+        <div className="border-t bg-white p-4 space-y-3">
           {/* Quick Filters */}
           <div className="flex flex-wrap gap-2">
             {SAVED_FILTERS.map((filter) => (
