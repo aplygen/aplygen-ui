@@ -1,4 +1,3 @@
-
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -66,7 +65,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
   const [chatInput, setChatInput] = React.useState("");
   const [selectedJobIds, setSelectedJobIds] = React.useState<Set<number>>(new Set());
   const [appliedJobIds, setAppliedJobIds] = React.useState<Set<number>>(new Set());
-  const [activeTab, setActiveTab] = React.useState("chat");
+  const [activeTab, setActiveTab] = React.useState("jobs");
   const [chatSessions, setChatSessions] = React.useState<ChatSession[]>([
     {
       id: "1",
@@ -105,7 +104,6 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     
     if (!hasStartedChat) {
       setHasStartedChat(true);
-      setActiveTab("jobs");
     }
     
     const userMessage: ChatMessage = {
@@ -134,7 +132,6 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     
     if (!hasStartedChat) {
       setHasStartedChat(true);
-      setActiveTab("jobs");
     }
     
     const userMessage: ChatMessage = {
@@ -195,7 +192,6 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     setMessages([]);
     setSelectedJobIds(new Set());
     setHasStartedChat(false);
-    setActiveTab("chat");
   };
 
   return (
@@ -262,10 +258,6 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
               {/* Tabs Header */}
               <div className="px-4 pt-4 border-b bg-white">
                 <TabsList className="grid w-full grid-cols-3">
-                  <TabsTrigger value="chat" className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    Chat
-                  </TabsTrigger>
                   <TabsTrigger value="jobs" className="flex items-center gap-2">
                     <Search className="h-4 w-4" />
                     Jobs ({jobs.length})
@@ -274,11 +266,42 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                     <Package className="h-4 w-4" />
                     Batches ({batches.length})
                   </TabsTrigger>
+                  <TabsTrigger value="chat" className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Chat
+                  </TabsTrigger>
                 </TabsList>
               </div>
 
               {/* Tab Content */}
               <div className="flex-1 overflow-hidden">
+                {/* Jobs View */}
+                <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                      {jobs.map((job) => (
+                        <JobCard
+                          key={job.id}
+                          job={job}
+                          isSelected={selectedJobIds.has(job.id)}
+                          isApplied={appliedJobIds.has(job.id)}
+                          onToggleSelect={toggleJobSelection}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                {/* Batches View */}
+                <TabsContent value="batches" className="h-full m-0 p-4">
+                  <BatchManager
+                    batches={batches}
+                    onPauseBatch={onPauseBatch}
+                    onResumeBatch={onResumeBatch}
+                    onRetryBatch={onRetryBatch}
+                  />
+                </TabsContent>
+
                 {/* Chat View */}
                 <TabsContent value="chat" className="h-full flex flex-col m-0 p-4">
                   <div className="flex-1 overflow-y-auto">
@@ -315,40 +338,20 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                     </div>
                   </div>
                 </TabsContent>
-
-                {/* Jobs View */}
-                <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
-                  <div className="flex-1 overflow-y-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                      {jobs.map((job) => (
-                        <JobCard
-                          key={job.id}
-                          job={job}
-                          isSelected={selectedJobIds.has(job.id)}
-                          isApplied={appliedJobIds.has(job.id)}
-                          onToggleSelect={toggleJobSelection}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* Batches View */}
-                <TabsContent value="batches" className="h-full m-0 p-4">
-                  <BatchManager
-                    batches={batches}
-                    onPauseBatch={onPauseBatch}
-                    onResumeBatch={onResumeBatch}
-                    onRetryBatch={onRetryBatch}
-                  />
-                </TabsContent>
               </div>
             </Tabs>
           )}
         </div>
 
-        {/* Bottom Chat Input - Fixed at bottom */}
+        {/* Bottom Chat Input - Fixed at bottom like Lovable */}
         <div className="border-t bg-white p-4 space-y-3">
+          {/* Apply Button - Only show if jobs are selected */}
+          {selectedJobIds.size > 0 && (
+            <Button onClick={handleApplySelected} className="w-full">
+              Apply to {selectedJobIds.size} selected job{selectedJobIds.size > 1 ? 's' : ''}
+            </Button>
+          )}
+
           {/* Quick Filters - Only show if chat hasn't started */}
           {!hasStartedChat && (
             <div className="flex flex-wrap gap-2">
@@ -363,13 +366,6 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                 </Badge>
               ))}
             </div>
-          )}
-
-          {/* Apply Button - Only show if jobs are selected */}
-          {selectedJobIds.size > 0 && (
-            <Button onClick={handleApplySelected} className="w-full">
-              Apply to {selectedJobIds.size} selected job{selectedJobIds.size > 1 ? 's' : ''}
-            </Button>
           )}
 
           {/* Chat Input */}
