@@ -16,6 +16,12 @@ const MOCK_JOBS: Job[] = [
   { id: 10, title: "UI/UX Designer", company: "PixelPush", location: "NYC", salary: "$102,000", posted: "2025-06-10" },
 ];
 
+const USER_DATA = {
+  name: "Vishwas",
+  tagline: "Full Stack Developer",
+  jobTitle: "Software Engineer"
+};
+
 const Index = () => {
   const [search, setSearch] = React.useState("");
   const [appliedJobIds, setAppliedJobIds] = React.useState<Set<number>>(new Set());
@@ -80,12 +86,14 @@ const Index = () => {
       description: `${selectedJobs.length} jobs added to ${newBatch.name}`,
     });
 
+    // Start processing simulation
     setTimeout(() => {
       setBatches(prev => prev.map(batch => 
         batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
       ));
     }, 1000);
 
+    // Simulate job processing
     batchJobs.forEach((job, index) => {
       setTimeout(() => {
         setBatches(prev => prev.map(batch => {
