@@ -214,9 +214,9 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
       />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Header with User Profile */}
-        <div className="p-4 border-b bg-white flex items-center justify-between">
+        <div className="p-4 border-b bg-white flex items-center justify-between flex-shrink-0">
           <div className="flex-1">
             <h1 className="text-xl font-semibold">Job Search Assistant</h1>
             <p className="text-sm text-muted-foreground">Find and apply to your dream jobs</p>
@@ -238,7 +238,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
         </div>
 
         {/* Main Content */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col min-h-0">
           {!hasStartedChat ? (
             /* Initial Welcome Screen */
             <div className="flex-1 flex items-center justify-center">
@@ -263,9 +263,9 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
             </div>
           ) : (
             /* Tabs Component */
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col min-h-0">
               {/* Tabs Header */}
-              <div className="px-4 pt-4 border-b bg-white">
+              <div className="px-4 pt-4 border-b bg-white flex-shrink-0">
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="chat" className="flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
@@ -283,75 +283,73 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
               </div>
 
               {/* Tab Content */}
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 flex flex-col min-h-0">
                 {/* Chat View */}
-                <TabsContent value="chat" className="h-full flex flex-col m-0 p-4">
-                  <div className="flex-1 overflow-y-auto mb-4">
-                    <div className="space-y-4">
-                      {messages.map((message) => (
-                        <div key={message.id}>
-                          {message.type === 'jobs' ? (
-                            <div className="border rounded-lg p-4 bg-white shadow-sm">
-                              <div className="flex items-center justify-between mb-3">
-                                <div>
-                                  <h4 className="font-semibold">Found {message.jobCount} jobs</h4>
-                                  <p className="text-sm text-gray-600">Search: "{message.searchQuery}"</p>
-                                </div>
-                              </div>
-                              
-                              <div className="flex gap-2">
-                                <Button 
-                                  onClick={handleViewJobs}
-                                  className="flex items-center gap-2"
-                                >
-                                  View Jobs <ArrowRight className="h-4 w-4" />
-                                </Button>
-                                <Button 
-                                  variant="outline"
-                                  onClick={handleViewBatches}
-                                  className="flex items-center gap-2"
-                                >
-                                  View Batches <ArrowRight className="h-4 w-4" />
-                                </Button>
+                <TabsContent value="chat" className="flex-1 flex flex-col m-0 p-4 min-h-0">
+                  <div className="flex-1 overflow-y-auto space-y-4 mb-4">
+                    {messages.map((message) => (
+                      <div key={message.id}>
+                        {message.type === 'jobs' ? (
+                          <div className="border rounded-lg p-4 bg-white shadow-sm">
+                            <div className="flex items-center justify-between mb-3">
+                              <div>
+                                <h4 className="font-semibold">Found {message.jobCount} jobs</h4>
+                                <p className="text-sm text-gray-600">Search: "{message.searchQuery}"</p>
                               </div>
                             </div>
-                          ) : (
+                            
+                            <div className="flex gap-2">
+                              <Button 
+                                onClick={handleViewJobs}
+                                className="flex items-center gap-2"
+                              >
+                                View Jobs <ArrowRight className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="outline"
+                                onClick={handleViewBatches}
+                                className="flex items-center gap-2"
+                              >
+                                View Batches <ArrowRight className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className={cn(
+                            "flex gap-3",
+                            message.type === 'user' ? 'justify-end' : 'justify-start'
+                          )}>
                             <div className={cn(
-                              "flex gap-3",
-                              message.type === 'user' ? 'justify-end' : 'justify-start'
+                              "flex gap-3 max-w-[80%]",
+                              message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
                             )}>
                               <div className={cn(
-                                "flex gap-3 max-w-[80%]",
-                                message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
+                                "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                                message.type === 'user' 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'bg-secondary text-secondary-foreground'
                               )}>
-                                <div className={cn(
-                                  "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
-                                  message.type === 'user' 
-                                    ? 'bg-primary text-primary-foreground' 
-                                    : 'bg-secondary text-secondary-foreground'
-                                )}>
-                                  {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
-                                </div>
-                                <div className={cn(
-                                  "px-4 py-3 rounded-lg",
-                                  message.type === 'user'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-white border shadow-sm'
-                                )}>
-                                  {message.content}
-                                </div>
+                                {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                              </div>
+                              <div className={cn(
+                                "px-4 py-3 rounded-lg",
+                                message.type === 'user'
+                                  ? 'bg-primary text-primary-foreground'
+                                  : 'bg-white border shadow-sm'
+                              )}>
+                                {message.content}
                               </div>
                             </div>
-                          )}
-                        </div>
-                      ))}
-                      <div ref={messagesEndRef} />
-                    </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                    <div ref={messagesEndRef} />
                   </div>
                 </TabsContent>
 
                 {/* Jobs View */}
-                <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
+                <TabsContent value="jobs" className="flex-1 flex flex-col m-0 p-4 min-h-0">
                   <div className="flex-1 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
                       {allFoundJobs.map((job) => (
@@ -368,7 +366,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                 </TabsContent>
 
                 {/* Batches View */}
-                <TabsContent value="batches" className="h-full m-0 p-4">
+                <TabsContent value="batches" className="flex-1 m-0 p-4 min-h-0">
                   <BatchManager
                     batches={batches}
                     onPauseBatch={onPauseBatch}
@@ -382,7 +380,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
         </div>
 
         {/* Bottom Chat Input - Fixed at bottom */}
-        <div className="border-t bg-white p-4 space-y-3">
+        <div className="border-t bg-white p-4 space-y-3 flex-shrink-0">
           {/* Apply Button - Only show if jobs are selected */}
           {selectedJobIds.size > 0 && (
             <Button onClick={handleApplySelected} className="w-full">
