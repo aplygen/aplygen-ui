@@ -1,10 +1,11 @@
+
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Bot, User, Search, Package, MessageSquare } from "lucide-react";
+import { Send, Bot, User, Search, Package, MessageSquare, MapPin, DollarSign, ExternalLink, CheckCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Job, JobBatch } from "@/types/batch";
 import { BatchManager } from "@/components/BatchManager";
@@ -13,9 +14,11 @@ import { JobCard } from "@/components/JobCard";
 
 interface ChatMessage {
   id: string;
-  type: 'user' | 'ai';
-  content: string;
+  type: 'user' | 'ai' | 'jobs';
+  content?: string;
   timestamp: Date;
+  jobs?: Job[];
+  searchQuery?: string;
 }
 
 interface ChatSession {
@@ -78,6 +81,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
   ]);
   const [activeSessionId, setActiveSessionId] = React.useState("1");
   const [hasStartedChat, setHasStartedChat] = React.useState(false);
+  const [allFoundJobs, setAllFoundJobs] = React.useState<Job[]>([]);
   const messagesEndRef = React.useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -116,42 +120,38 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     setMessages(prev => [...prev, userMessage]);
     setChatInput("");
     
+    // Simulate job search response with interactive job cards
     setTimeout(() => {
+      const foundJobs = jobs.slice(0, Math.min(5, jobs.length)); // Show first 5 jobs
+      setAllFoundJobs(prev => {
+        const existingIds = new Set(prev.map(job => job.id));
+        const newJobs = foundJobs.filter(job => !existingIds.has(job.id));
+        return [...prev, ...newJobs];
+      });
+
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: `I found ${jobs.length} jobs matching your request. You can select the ones you'd like to apply to from the grid above.`,
+        content: `I found ${foundJobs.length} jobs matching your request. Here they are:`,
         timestamp: new Date()
       };
-      setMessages(prev => [...prev, aiMessage]);
+      
+      const jobsMessage: ChatMessage = {
+        id: (Date.now() + 2).toString(),
+        type: 'jobs',
+        jobs: foundJobs,
+        searchQuery: chatInput,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, aiMessage, jobsMessage]);
     }, 500);
   };
 
   const handleSearch = (searchTerm: string) => {
     setSearch(searchTerm);
-    
-    if (!hasStartedChat) {
-      setHasStartedChat(true);
-    }
-    
-    const userMessage: ChatMessage = {
-      id: Date.now().toString(),
-      type: 'user',
-      content: `Search: ${searchTerm}`,
-      timestamp: new Date()
-    };
-    
-    setMessages(prev => [...prev, userMessage]);
-    
-    setTimeout(() => {
-      const aiMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        type: 'ai',
-        content: `Found ${jobs.length} jobs matching "${searchTerm}". Select the ones you'd like to apply to!`,
-        timestamp: new Date()
-      };
-      setMessages(prev => [...prev, aiMessage]);
-    }, 500);
+    setChatInput(searchTerm);
+    handleChatSend();
   };
 
   const toggleJobSelection = (jobId: number) => {
@@ -167,11 +167,19 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
   };
 
   const handleApplySelected = () => {
-    const selectedJobs = jobs.filter(job => selectedJobIds.has(job.id));
+    const selectedJobs = allFoundJobs.filter(job => selectedJobIds.has(job.id));
     if (selectedJobs.length > 0) {
       onApply(selectedJobs);
       setSelectedJobIds(new Set());
     }
+  };
+
+  const handleViewAllJobs = () => {
+    setActiveTab("jobs");
+  };
+
+  const handleApplyFromChat = (job: Job) => {
+    onApply([job]);
   };
 
   const handleFilterClick = (filter: typeof SAVED_FILTERS[0]) => {
@@ -192,6 +200,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     setMessages([]);
     setSelectedJobIds(new Set());
     setHasStartedChat(false);
+    setAllFoundJobs([]);
   };
 
   return (
@@ -260,7 +269,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                 <TabsList className="grid w-full grid-cols-3">
                   <TabsTrigger value="jobs" className="flex items-center gap-2">
                     <Search className="h-4 w-4" />
-                    Jobs ({jobs.length})
+                    Jobs ({allFoundJobs.length})
                   </TabsTrigger>
                   <TabsTrigger value="batches" className="flex items-center gap-2">
                     <Package className="h-4 w-4" />
@@ -279,7 +288,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                 <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
                   <div className="flex-1 overflow-y-auto">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                      {jobs.map((job) => (
+                      {allFoundJobs.map((job) => (
                         <JobCard
                           key={job.id}
                           job={job}
@@ -307,31 +316,100 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                   <div className="flex-1 overflow-y-auto">
                     <div className="space-y-4">
                       {messages.map((message) => (
-                        <div key={message.id} className={cn(
-                          "flex gap-3",
-                          message.type === 'user' ? 'justify-end' : 'justify-start'
-                        )}>
-                          <div className={cn(
-                            "flex gap-3 max-w-[80%]",
-                            message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
-                          )}>
-                            <div className={cn(
-                              "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
-                              message.type === 'user' 
-                                ? 'bg-primary text-primary-foreground' 
-                                : 'bg-secondary text-secondary-foreground'
-                            )}>
-                              {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                        <div key={message.id}>
+                          {message.type === 'jobs' ? (
+                            <div className="space-y-3">
+                              {message.jobs?.map((job) => (
+                                <div key={job.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                                  <div className="flex items-start justify-between mb-3">
+                                    <div className="flex-1">
+                                      <h4 className="font-semibold text-lg">{job.title}</h4>
+                                      <p className="text-gray-600">{job.company}</p>
+                                    </div>
+                                    {appliedJobIds.has(job.id) && (
+                                      <CheckCircle className="h-5 w-5 text-green-500" />
+                                    )}
+                                  </div>
+                                  
+                                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
+                                    <div className="flex items-center gap-1">
+                                      <MapPin className="h-4 w-4" />
+                                      {job.location}
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                      <DollarSign className="h-4 w-4" />
+                                      {job.salary}
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="flex gap-2">
+                                    {!appliedJobIds.has(job.id) && (
+                                      <Button 
+                                        size="sm" 
+                                        onClick={() => handleApplyFromChat(job)}
+                                        className="flex-1"
+                                      >
+                                        Apply Now
+                                      </Button>
+                                    )}
+                                    <Button 
+                                      size="sm" 
+                                      variant="outline"
+                                      onClick={() => toggleJobSelection(job.id)}
+                                      className={selectedJobIds.has(job.id) ? "bg-primary/10" : ""}
+                                    >
+                                      {selectedJobIds.has(job.id) ? "Selected" : "Select"}
+                                    </Button>
+                                  </div>
+                                </div>
+                              ))}
+                              
+                              {message.jobs && message.jobs.length > 0 && (
+                                <div className="flex gap-2 mt-4">
+                                  <Button 
+                                    variant="outline" 
+                                    onClick={handleViewAllJobs}
+                                    className="flex items-center gap-2"
+                                  >
+                                    <ExternalLink className="h-4 w-4" />
+                                    View All Jobs
+                                  </Button>
+                                  {selectedJobIds.size > 0 && (
+                                    <Button onClick={handleApplySelected}>
+                                      Apply to {selectedJobIds.size} Selected
+                                    </Button>
+                                  )}
+                                </div>
+                              )}
                             </div>
+                          ) : (
                             <div className={cn(
-                              "px-4 py-3 rounded-lg",
-                              message.type === 'user'
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-white border shadow-sm'
+                              "flex gap-3",
+                              message.type === 'user' ? 'justify-end' : 'justify-start'
                             )}>
-                              {message.content}
+                              <div className={cn(
+                                "flex gap-3 max-w-[80%]",
+                                message.type === 'user' ? 'flex-row-reverse' : 'flex-row'
+                              )}>
+                                <div className={cn(
+                                  "w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0",
+                                  message.type === 'user' 
+                                    ? 'bg-primary text-primary-foreground' 
+                                    : 'bg-secondary text-secondary-foreground'
+                                )}>
+                                  {message.type === 'user' ? <User className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+                                </div>
+                                <div className={cn(
+                                  "px-4 py-3 rounded-lg",
+                                  message.type === 'user'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-white border shadow-sm'
+                                )}>
+                                  {message.content}
+                                </div>
+                              </div>
                             </div>
-                          </div>
+                          )}
                         </div>
                       ))}
                       <div ref={messagesEndRef} />
