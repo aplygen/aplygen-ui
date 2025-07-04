@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Bot, User, Search, Package, MessageSquare, MapPin, DollarSign, ExternalLink, CheckCircle } from "lucide-react";
+import { Send, Bot, User, Search, Package, MessageSquare, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Job, JobBatch } from "@/types/batch";
 import { BatchManager } from "@/components/BatchManager";
@@ -17,7 +17,7 @@ interface ChatMessage {
   type: 'user' | 'ai' | 'jobs';
   content?: string;
   timestamp: Date;
-  jobs?: Job[];
+  jobCount?: number;
   searchQuery?: string;
 }
 
@@ -68,7 +68,7 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
   const [chatInput, setChatInput] = React.useState("");
   const [selectedJobIds, setSelectedJobIds] = React.useState<Set<number>>(new Set());
   const [appliedJobIds, setAppliedJobIds] = React.useState<Set<number>>(new Set());
-  const [activeTab, setActiveTab] = React.useState("jobs");
+  const [activeTab, setActiveTab] = React.useState("chat");
   const [chatSessions, setChatSessions] = React.useState<ChatSession[]>([
     {
       id: "1",
@@ -120,9 +120,9 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     setMessages(prev => [...prev, userMessage]);
     setChatInput("");
     
-    // Simulate job search response with interactive job cards
+    // Simulate job search response with job count
     setTimeout(() => {
-      const foundJobs = jobs.slice(0, Math.min(5, jobs.length)); // Show first 5 jobs
+      const foundJobs = jobs.slice(0, Math.min(5, jobs.length));
       setAllFoundJobs(prev => {
         const existingIds = new Set(prev.map(job => job.id));
         const newJobs = foundJobs.filter(job => !existingIds.has(job.id));
@@ -132,14 +132,14 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
       const aiMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'ai',
-        content: `I found ${foundJobs.length} jobs matching your request. Here they are:`,
+        content: `I found ${foundJobs.length} jobs matching "${chatInput}". Click below to view and apply to them.`,
         timestamp: new Date()
       };
       
       const jobsMessage: ChatMessage = {
         id: (Date.now() + 2).toString(),
         type: 'jobs',
-        jobs: foundJobs,
+        jobCount: foundJobs.length,
         searchQuery: chatInput,
         timestamp: new Date()
       };
@@ -174,12 +174,12 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
     }
   };
 
-  const handleViewAllJobs = () => {
+  const handleViewJobs = () => {
     setActiveTab("jobs");
   };
 
-  const handleApplyFromChat = (job: Job) => {
-    onApply([job]);
+  const handleViewBatches = () => {
+    setActiveTab("batches");
   };
 
   const handleFilterClick = (filter: typeof SAVED_FILTERS[0]) => {
@@ -267,6 +267,10 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
               {/* Tabs Header */}
               <div className="px-4 pt-4 border-b bg-white">
                 <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="chat" className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Chat
+                  </TabsTrigger>
                   <TabsTrigger value="jobs" className="flex items-center gap-2">
                     <Search className="h-4 w-4" />
                     Jobs ({allFoundJobs.length})
@@ -275,112 +279,41 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                     <Package className="h-4 w-4" />
                     Batches ({batches.length})
                   </TabsTrigger>
-                  <TabsTrigger value="chat" className="flex items-center gap-2">
-                    <MessageSquare className="h-4 w-4" />
-                    Chat
-                  </TabsTrigger>
                 </TabsList>
               </div>
 
               {/* Tab Content */}
               <div className="flex-1 overflow-hidden">
-                {/* Jobs View */}
-                <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
-                  <div className="flex-1 overflow-y-auto">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
-                      {allFoundJobs.map((job) => (
-                        <JobCard
-                          key={job.id}
-                          job={job}
-                          isSelected={selectedJobIds.has(job.id)}
-                          isApplied={appliedJobIds.has(job.id)}
-                          onToggleSelect={toggleJobSelection}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                </TabsContent>
-
-                {/* Batches View */}
-                <TabsContent value="batches" className="h-full m-0 p-4">
-                  <BatchManager
-                    batches={batches}
-                    onPauseBatch={onPauseBatch}
-                    onResumeBatch={onResumeBatch}
-                    onRetryBatch={onRetryBatch}
-                  />
-                </TabsContent>
-
                 {/* Chat View */}
                 <TabsContent value="chat" className="h-full flex flex-col m-0 p-4">
-                  <div className="flex-1 overflow-y-auto">
+                  <div className="flex-1 overflow-y-auto mb-4">
                     <div className="space-y-4">
                       {messages.map((message) => (
                         <div key={message.id}>
                           {message.type === 'jobs' ? (
-                            <div className="space-y-3">
-                              {message.jobs?.map((job) => (
-                                <div key={job.id} className="border rounded-lg p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
-                                  <div className="flex items-start justify-between mb-3">
-                                    <div className="flex-1">
-                                      <h4 className="font-semibold text-lg">{job.title}</h4>
-                                      <p className="text-gray-600">{job.company}</p>
-                                    </div>
-                                    {appliedJobIds.has(job.id) && (
-                                      <CheckCircle className="h-5 w-5 text-green-500" />
-                                    )}
-                                  </div>
-                                  
-                                  <div className="flex items-center gap-4 text-sm text-gray-500 mb-4">
-                                    <div className="flex items-center gap-1">
-                                      <MapPin className="h-4 w-4" />
-                                      {job.location}
-                                    </div>
-                                    <div className="flex items-center gap-1">
-                                      <DollarSign className="h-4 w-4" />
-                                      {job.salary}
-                                    </div>
-                                  </div>
-                                  
-                                  <div className="flex gap-2">
-                                    {!appliedJobIds.has(job.id) && (
-                                      <Button 
-                                        size="sm" 
-                                        onClick={() => handleApplyFromChat(job)}
-                                        className="flex-1"
-                                      >
-                                        Apply Now
-                                      </Button>
-                                    )}
-                                    <Button 
-                                      size="sm" 
-                                      variant="outline"
-                                      onClick={() => toggleJobSelection(job.id)}
-                                      className={selectedJobIds.has(job.id) ? "bg-primary/10" : ""}
-                                    >
-                                      {selectedJobIds.has(job.id) ? "Selected" : "Select"}
-                                    </Button>
-                                  </div>
+                            <div className="border rounded-lg p-4 bg-white shadow-sm">
+                              <div className="flex items-center justify-between mb-3">
+                                <div>
+                                  <h4 className="font-semibold">Found {message.jobCount} jobs</h4>
+                                  <p className="text-sm text-gray-600">Search: "{message.searchQuery}"</p>
                                 </div>
-                              ))}
+                              </div>
                               
-                              {message.jobs && message.jobs.length > 0 && (
-                                <div className="flex gap-2 mt-4">
-                                  <Button 
-                                    variant="outline" 
-                                    onClick={handleViewAllJobs}
-                                    className="flex items-center gap-2"
-                                  >
-                                    <ExternalLink className="h-4 w-4" />
-                                    View All Jobs
-                                  </Button>
-                                  {selectedJobIds.size > 0 && (
-                                    <Button onClick={handleApplySelected}>
-                                      Apply to {selectedJobIds.size} Selected
-                                    </Button>
-                                  )}
-                                </div>
-                              )}
+                              <div className="flex gap-2">
+                                <Button 
+                                  onClick={handleViewJobs}
+                                  className="flex items-center gap-2"
+                                >
+                                  View Jobs <ArrowRight className="h-4 w-4" />
+                                </Button>
+                                <Button 
+                                  variant="outline"
+                                  onClick={handleViewBatches}
+                                  className="flex items-center gap-2"
+                                >
+                                  View Batches <ArrowRight className="h-4 w-4" />
+                                </Button>
+                              </div>
                             </div>
                           ) : (
                             <div className={cn(
@@ -416,12 +349,39 @@ export const JobChatInterface: React.FC<JobChatInterfaceProps> = ({
                     </div>
                   </div>
                 </TabsContent>
+
+                {/* Jobs View */}
+                <TabsContent value="jobs" className="h-full flex flex-col m-0 p-4">
+                  <div className="flex-1 overflow-y-auto">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+                      {allFoundJobs.map((job) => (
+                        <JobCard
+                          key={job.id}
+                          job={job}
+                          isSelected={selectedJobIds.has(job.id)}
+                          isApplied={appliedJobIds.has(job.id)}
+                          onToggleSelect={toggleJobSelection}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </TabsContent>
+
+                {/* Batches View */}
+                <TabsContent value="batches" className="h-full m-0 p-4">
+                  <BatchManager
+                    batches={batches}
+                    onPauseBatch={onPauseBatch}
+                    onResumeBatch={onResumeBatch}
+                    onRetryBatch={onRetryBatch}
+                  />
+                </TabsContent>
               </div>
             </Tabs>
           )}
         </div>
 
-        {/* Bottom Chat Input - Fixed at bottom like Lovable */}
+        {/* Bottom Chat Input - Fixed at bottom */}
         <div className="border-t bg-white p-4 space-y-3">
           {/* Apply Button - Only show if jobs are selected */}
           {selectedJobIds.size > 0 && (
