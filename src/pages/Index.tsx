@@ -1,7 +1,4 @@
-
 import * as React from "react";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
 import { JobChatInterface } from "@/components/JobChatInterface";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
@@ -83,14 +80,12 @@ const Index = () => {
       description: `${selectedJobs.length} jobs added to ${newBatch.name}`,
     });
 
-    // Start processing simulation
     setTimeout(() => {
       setBatches(prev => prev.map(batch => 
         batch.id === batchId ? { ...batch, status: 'processing' as const } : batch
       ));
     }, 1000);
 
-    // Simulate job processing
     batchJobs.forEach((job, index) => {
       setTimeout(() => {
         setBatches(prev => prev.map(batch => {
@@ -163,23 +158,18 @@ const Index = () => {
   }, [toast]);
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <AppSidebar />
-        <SidebarInset className="flex-1">
-          <JobChatInterface
-            jobs={availableJobs}
-            batches={batches}
-            onApply={handleApply}
-            onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-            onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-            onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-            search={search}
-            setSearch={setSearch}
-          />
-        </SidebarInset>
-      </div>
-    </SidebarProvider>
+    <div className="h-screen bg-background">
+      <JobChatInterface
+        jobs={availableJobs}
+        batches={batches}
+        onApply={handleApply}
+        onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+        onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+        onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+        search={search}
+        setSearch={setSearch}
+      />
+    </div>
   );
 };
 
