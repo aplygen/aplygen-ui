@@ -12,6 +12,7 @@ import Resume from "./pages/Resume";
 import Questions from "./pages/Questions";
 import Logs from "./pages/Logs";
 import NotFound from "./pages/NotFound";
+import Applications from "./pages/Applications";
 
 const queryClient = new QueryClient();
 
@@ -22,6 +23,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/applications" element={<Applications />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/settings" element={<Settings />} />

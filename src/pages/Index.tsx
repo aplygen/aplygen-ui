@@ -1,4 +1,7 @@
+
 import * as React from "react";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { JobChatInterface } from "@/components/JobChatInterface";
 import { Job, JobBatch, BatchJob } from "@/types/batch";
 import { useToast } from "@/hooks/use-toast";
@@ -15,12 +18,6 @@ const MOCK_JOBS: Job[] = [
   { id: 9, title: "Frontend Architect", company: "CoreSystems", location: "NYC", salary: "$145,000", posted: "2025-06-08" },
   { id: 10, title: "UI/UX Designer", company: "PixelPush", location: "NYC", salary: "$102,000", posted: "2025-06-10" },
 ];
-
-const USER_DATA = {
-  name: "Vishwas",
-  tagline: "Full Stack Developer",
-  jobTitle: "Software Engineer"
-};
 
 const Index = () => {
   const [search, setSearch] = React.useState("");
@@ -166,18 +163,23 @@ const Index = () => {
   }, [toast]);
 
   return (
-    <div className="h-screen bg-background">
-      <JobChatInterface
-        jobs={availableJobs}
-        batches={batches}
-        onApply={handleApply}
-        onPauseBatch={(id) => handleBatchAction(id, 'pause')}
-        onResumeBatch={(id) => handleBatchAction(id, 'resume')}
-        onRetryBatch={(id) => handleBatchAction(id, 'retry')}
-        search={search}
-        setSearch={setSearch}
-      />
-    </div>
+    <SidebarProvider>
+      <div className="flex min-h-screen w-full">
+        <AppSidebar />
+        <SidebarInset className="flex-1">
+          <JobChatInterface
+            jobs={availableJobs}
+            batches={batches}
+            onApply={handleApply}
+            onPauseBatch={(id) => handleBatchAction(id, 'pause')}
+            onResumeBatch={(id) => handleBatchAction(id, 'resume')}
+            onRetryBatch={(id) => handleBatchAction(id, 'retry')}
+            search={search}
+            setSearch={setSearch}
+          />
+        </SidebarInset>
+      </div>
+    </SidebarProvider>
   );
 };
 
